@@ -1,1 +1,3275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitCoach - Professional Fitness Coaching</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1dOBoH9GHnxAJhuax2_SLtaY8sfFuncY",
+            authDomain: "gyma-249b7.firebaseapp.com",
+            projectId: "gyma-249b7",
+            storageBucket: "gyma-249b7.firebasestorage.app",
+            messagingSenderId: "169812675743",
+            appId: "1:169812675743:web:96edecbeb219d06f9da6aa",
+            measurementId: "G-RSRZ508FK4"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        
+        // Make Firebase available globally
+        window.db = db;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        window.auth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+    </script>
+</head>
+<style>
+    :root {
+        --color-primary: #005f6a;
+        --color-primary-dark: #004952;
+        --color-bg: #f3e7d0;
+    }
+    /* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #1f2937;
+    overflow-x: hidden;
+    background: var(--color-bg);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+
+p {
+    margin-bottom: 1rem;
+    color: #6b7280;
+}
+
+.text-gradient { color: var(--color-primary); }
+
+.section-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.section-description {
+    text-align: center;
+    font-size: 1.125rem;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 95, 106, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.btn-outline:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-bg);
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav {
+    padding: 0 1rem;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+}
+
+.nav-brand .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-primary);
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--color-primary);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 0.25rem;
+}
+
+.nav-toggle span {
+    width: 1.5rem;
+    height: 0.125rem;
+    background: #374151;
+    transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero {
+    padding: 6rem 0 4rem;
+    background: var(--color-bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.hero-image {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.coach-image {
+    width: 100%;
+    max-width: 400px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.floating-card {
+    position: absolute;
+    bottom: 2rem;
+    right: -1rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 160px;
+}
+
+.card-icon {
+    font-size: 1.5rem;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-number {
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.card-text {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* About Section */
+.about {
+    padding: 5rem 0;
+    background: var(--color-bg);
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-image {
+    position: relative;
+}
+
+.about-img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.about-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.about-description {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+}
+
+.credentials {
+    margin-bottom: 2rem;
+}
+
+.credentials h3 {
+    margin-bottom: 1rem;
+    color: #1f2937;
+}
+
+.credentials-list {
+    list-style: none;
+    space: 0.5rem;
+}
+
+.credentials-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #6b7280;
+}
+
+.credentials-list li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+}
+
+.about-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.highlight {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.highlight-icon {
+    font-size: 2rem;
+}
+
+.highlight-text h4 {
+    margin-bottom: 0.25rem;
+    color: #1f2937;
+}
+
+.highlight-text p {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Services Section */
+.services {
+    padding: 5rem 0;
+    background: var(--color-bg);
+}
+
+.services-header {
+    margin-bottom: 4rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.service-card {
+    background: var(--color-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid #e5e7eb;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.service-card.featured {
+    border: 2px solid var(--color-primary);
+    transform: scale(1.05);
+}
+
+        .featured-badge {
+            position: absolute;
+            top: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Cart Styles */
+        .cart-toggle {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 0.75rem;
+            box-shadow: 0 6px 14px rgba(0, 95, 106, 0.25);
+        }
+
+        .cart-toggle:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 18px rgba(0, 95, 106, 0.35);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 9999px;
+            padding: 0.15rem 0.45rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 95, 106, 0.5);
+        }
+
+        .service-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            background: var(--color-bg);
+            border-radius: 0.5rem;
+        }
+
+        .quantity-selector button {
+            background: var(--color-bg);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+
+        .quantity-selector button:hover {
+            background: var(--color-bg);
+        }
+
+        .quantity-selector span {
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .btn-cart {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cart:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-cart.btn-primary {
+            background: var(--color-primary);
+        }
+
+        .btn-cart.btn-primary:hover {
+            background: var(--color-primary-dark);
+        }
+
+        /* Cart Modal Styles */
+        .cart-modal, .checkout-modal, .login-required-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .cart-content, .checkout-content, .login-required-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--color-bg);
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .checkout-content {
+            max-width: 600px;
+        }
+
+        .login-required-content {
+            max-width: 550px;
+        }
+
+        .cart-header, .checkout-header, .login-required-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-header h3, .checkout-header h3, .login-required-header h3 {
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .cart-close, .checkout-close, .login-required-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .cart-close:hover, .checkout-close:hover, .login-required-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .cart-body, .checkout-body {
+            padding: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        .cart-item-info p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-item-controls button {
+            background: #e5e7eb;
+            border: none;
+            border-radius: 0.25rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+
+        .cart-item-controls button:hover {
+            background: #d1d5db;
+        }
+
+        .cart-item-controls .remove-btn {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .cart-item-controls .remove-btn:hover {
+            background: var(--color-primary-dark);
+        }
+
+        .cart-item-total {
+            font-weight: 700;
+            color: var(--color-primary);
+            font-size: 1.1rem;
+        }
+
+        .cart-footer, .checkout-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .checkout-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .order-summary {
+            margin-bottom: 2rem;
+        }
+
+        .order-summary h4 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+        }
+
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkout-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+            font-size: 1.25rem;
+            text-align: right;
+        }
+
+        .payment-section {
+            margin-bottom: 2rem;
+        }
+
+        .payment-section h4 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-option:hover {
+            background: var(--color-bg);
+            border-color: var(--color-primary);
+        }
+
+        .payment-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .customer-info h4 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+        }
+
+        .customer-info .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .customer-info input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .customer-info input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(0, 95, 106, 0.1);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cart-content, .checkout-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .service-actions {
+                gap: 0.75rem;
+            }
+
+            .quantity-selector {
+                gap: 0.75rem;
+            }
+
+            .cart-toggle {
+                width: 45px;
+                height: 45px;
+                margin-left: 0.5rem;
+            }
+        }
+
+.service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.service-title {
+    margin-bottom: 1rem;
+    color: #1f2937;
+}
+
+.service-description {
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.service-features {
+    list-style: none;
+    margin-bottom: 1.5rem;
+}
+
+.service-features li {
+    padding: 0.25rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.service-features li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+.service-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.period {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 5rem 0;
+    background: var(--color-bg);
+}
+
+.testimonials-header { margin-bottom: 2rem; }
+
+/* New testimonials carousel */
+.testimonials-carousel {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+}
+
+.testimonials-carousel::-webkit-scrollbar { height: 8px; }
+.testimonials-carousel::-webkit-scrollbar-track { background: rgba(0, 95, 106, 0.06); }
+.testimonials-carousel::-webkit-scrollbar-thumb { background: rgba(0, 95, 106, 0.25); border-radius: 9999px; }
+
+.t-card {
+    scroll-snap-align: start;
+    flex: 0 0 320px;
+    background: var(--color-bg);
+    border: 1px solid rgba(0, 95, 106, 0.25);
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.t-media { position: relative; }
+.t-avatar {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 2px solid var(--color-primary);
+    background: var(--color-bg);
+}
+
+.t-body { display: none; margin-top: 0; }
+.t-stars { color: var(--color-primary); font-size: 0.9rem; letter-spacing: 1px; }
+.t-quote { margin: 0.5rem 0 0.75rem 0; font-size: 0.95rem; line-height: 1.5; }
+.t-author { display: flex; flex-direction: column; gap: 0.25rem; }
+.t-name { font-weight: 700; }
+.t-meta { font-size: 0.85rem; color: #6b7280; }
+
+.testimonial-image {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.client-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stars {
+    color: #f59e0b;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.testimonial-text {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #374151;
+}
+
+.testimonial-author {
+    text-align: center;
+}
+
+.testimonial-author h4 {
+    margin-bottom: 0.25rem;
+    color: #1f2937;
+}
+
+.testimonial-author span {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Contact Section */
+.contact {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    color: white;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.contact-info .section-title,
+.contact-description {
+    color: white;
+    text-align: left;
+}
+
+.contact-description {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    color: #d1d5db;
+}
+
+.contact-features {
+    margin-bottom: 2rem;
+}
+
+.contact-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: #d1d5db;
+}
+
+.feature-icon {
+    color: #10b981;
+    font-weight: bold;
+}
+
+.contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-method {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #d1d5db;
+}
+
+.contact-method svg { color: var(--color-primary); }
+
+.contact-form {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #f3f4f6;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 95, 106, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Footer */
+.footer {
+    background: #111827;
+    color: #d1d5db;
+    padding: 3rem 0 1rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    margin-bottom: 2rem;
+}
+
+.footer-brand .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.footer-description {
+    color: #9ca3af;
+    line-height: 1.6;
+}
+
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.footer-column h4 {
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.footer-column ul {
+    list-style: none;
+}
+
+.footer-column ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-column a {
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.footer-column a:hover { color: var(--color-primary); }
+
+.footer-bottom {
+    border-top: 1px solid #374151;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.social-link {
+    color: #9ca3af;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+}
+
+    .social-link:hover { color: var(--color-primary); }
+
+    /* Authentication Styles */
+    .auth-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f3f4f6;
+        padding: 0.375rem 0.5rem;
+        border-radius: 9999px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .user-email {
+        color: #374151;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0 0.5rem;
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .user-menu .btn {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 1rem;
+        padding: 0;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 1.5rem;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6b7280;
+        padding: 0;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .auth-form {
+        padding: 0 2rem 2rem;
+    }
+
+    .auth-form .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-form .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #374151;
+    }
+
+    .auth-form .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        background: white;
+        color: #1f2937;
+    }
+
+    .auth-form .form-group input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(0, 95, 106, 0.1);
+    }
+
+    .auth-form .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .auth-form .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .auth-form .form-row .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-form .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        background: white;
+        color: #1f2937;
+        cursor: pointer;
+    }
+
+    .auth-form .form-group select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(0, 95, 106, 0.1);
+    }
+
+    .auth-switch {
+        text-align: center;
+        margin: 0;
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .auth-switch a {
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-switch a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        border: 1px solid #fecaca;
+    }
+
+    .success-message {
+        background: #f0fdf4;
+        color: #16a34a;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* Responsive Design */
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    
+    .service-card.featured {
+        transform: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 4rem;
+        left: 0;
+        right: 0;
+        background: var(--color-bg);
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .auth-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .auth-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .user-menu {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .user-email {
+        text-align: center;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-actions {
+        justify-content: center;
+    }
+    
+    .hero-image {
+        order: -1;
+    }
+    
+    .floating-card {
+        position: static;
+        margin-top: 1rem;
+    }
+    
+    .about-content,
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .about-highlights {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+        gap: 1.5rem;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .footer-links {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .container,
+    .hero-container {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .btn-large {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .services-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="logo">
+                        <img src="logo.png" alt="Logo" style="height: 56px; width: auto; display: block;" />
+                    </div>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#testimonials" class="nav-link">Testimonials</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                    <button class="cart-toggle" onclick="toggleCart()" aria-label="Open cart">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 12.39a2 2 0 0 0 2 1.61h8.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                                         <button class="btn btn-primary" id="bookConsultationBtn">Book Consultation</button>
+                     <div class="auth-buttons" id="authButtons">
+                         <button class="btn btn-outline" id="loginBtn">Login</button>
+                         <button class="btn btn-primary" id="registerBtn">Register</button>
+                     </div>
+                     <div class="user-menu" id="userMenu" style="display: none;">
+                         <span class="user-email" id="userEmail"></span>
+                         <a href="client.html" class="btn btn-primary">My Dashboard</a>
+                         <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                         <a href="admin.html" class="btn btn-secondary" id="adminLink" style="display: none;">Admin Dashboard</a>
+                     </div>
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Transform Your Body,<br>
+                        <span class="text-gradient">Elevate Your Life</span>
+                    </h1>
+                    <p class="hero-description">
+                        Get personalized fitness coaching that delivers real results. Join hundreds of clients who've achieved their dream physique with our proven methodology.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-large">
+                            Start Your Journey
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m9 18 6-6-6-6"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-secondary btn-large">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5,3 19,12 5,21"/>
+                            </svg>
+                            Watch Success Stories
+                        </button>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Clients Transformed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">95%</span>
+                            <span class="stat-label">Success Rate</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5+</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="bassem1.jpeg" alt="Professional Fitness Coach" class="coach-image">
+                    <div class="floating-card">
+                        <div class="card-icon">💪</div>
+                        <div class="card-content">
+                            <span class="card-number">12 weeks</span>
+                            <span class="card-text">Average Transformation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="bassem.jpeg" alt="Coach Bassem" class="about-img">
+                    <div class="about-badge">
+                        <span>Certified Professional</span>
+                    </div>
+                </div>
+                
+                <div class="about-text">
+                    <h2 class="section-title">Meet Your Coach</h2>
+                    <p class="about-description">
+                        With over 5 years of experience in fitness coaching and nutrition, I've helped hundreds of clients achieve their health and fitness goals. My approach combines proven training methodologies with personalized nutrition plans.
+                    </p>
+                    
+                    <div class="credentials">
+                        <h3>Certifications & Achievements</h3>
+                        <ul class="credentials-list">
+                            <li>NASM Certified Personal Trainer</li>
+                            <li>Precision Nutrition Level 1</li>
+                            <li>Functional Movement Screen Certified</li>
+                            <li>500+ Successful Client Transformations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="about-highlights">
+                        <div class="highlight">
+                            <div class="highlight-icon">🎯</div>
+                            <div class="highlight-text">
+                                <h4>Results-Driven</h4>
+                                <p>Proven track record of client success</p>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <div class="highlight-icon">🧠</div>
+                            <div class="highlight-text">
+                                <h4>Science-Based</h4>
+                                <p>Evidence-backed training methods</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="services-header">
+                <h2 class="section-title">Coaching Programs</h2>
+                <p class="section-description">
+                    Choose the perfect program to match your fitness goals and lifestyle
+                </p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🏋️‍♂️</div>
+                    <h3 class="service-title">Personal Training</h3>
+                    <p class="service-description">
+                        One-on-one sessions tailored to your specific goals with personalized workout plans and direct guidance.
+                    </p>
+                    <ul class="service-features">
+                        <li>Custom workout plans</li>
+                        <li>Form correction & technique</li>
+                        <li>Progress tracking</li>
+                        <li>Flexible scheduling</li>
+                    </ul>
+                    <div class="service-price">
+                        <span class="price">$89</span>
+                        <span class="period">/session</span>
+                    </div>
+                    <div class="service-actions">
+                        <div class="quantity-selector">
+                            <button type="button" onclick="updateQuantity('personal-training', -1)">-</button>
+                            <span id="personal-training-qty">1</span>
+                            <button type="button" onclick="updateQuantity('personal-training', 1)">+</button>
+                        </div>
+                        <button class="btn btn-cart" onclick="addToCart('personal-training', 'Personal Training', 89, 'session')">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card featured">
+                    <div class="featured-badge">Most Popular</div>
+                    <div class="service-icon">📱</div>
+                    <h3 class="service-title">Online Coaching</h3>
+                    <p class="service-description">
+                        Comprehensive online program with workout plans, nutrition guidance, and weekly check-ins.
+                    </p>
+                    <ul class="service-features">
+                        <li>Custom training program</li>
+                        <li>Nutrition meal plans</li>
+                        <li>Weekly video calls</li>
+                        <li>24/7 app support</li>
+                    </ul>
+                    <div class="service-price">
+                        <span class="price">$197</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <div class="service-actions">
+                        <div class="quantity-selector">
+                            <button type="button" onclick="updateQuantity('online-coaching', -1)">-</button>
+                            <span id="online-coaching-qty">1</span>
+                            <button type="button" onclick="updateQuantity('online-coaching', 1)">+</button>
+                        </div>
+                        <button class="btn btn-cart btn-primary" onclick="addToCart('online-coaching', 'Online Coaching', 197, 'month')">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">👥</div>
+                    <h3 class="service-title">Group Training</h3>
+                    <p class="service-description">
+                        Small group sessions combining the motivation of group fitness with personalized attention.
+                    </p>
+                    <ul class="service-features">
+                        <li>Small groups (4-6 people)</li>
+                        <li>Varied workout styles</li>
+                        <li>Motivating environment</li>
+                        <li>Cost-effective option</li>
+                    </ul>
+                    <div class="service-price">
+                        <span class="price">$39</span>
+                        <span class="period">/session</span>
+                    </div>
+                    <div class="service-actions">
+                        <div class="quantity-selector">
+                            <button type="button" onclick="updateQuantity('group-training', -1)">-</button>
+                            <span id="group-training-qty">1</span>
+                            <button type="button" onclick="updateQuantity('group-training', 1)">+</button>
+                        </div>
+                        <button class="btn btn-cart" onclick="addToCart('group-training', 'Group Training', 39, 'session')">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="testimonials-header">
+                <h2 class="section-title">Client Success Stories</h2>
+                <p class="section-description">
+                    Real transformations from real people who committed to their fitness journey
+                </p>
+            </div>
+            
+            <div class="testimonials-carousel">
+                <div class="t-card">
+                    <div class="t-media">
+                        <img src="Testimonials/test1.png" alt="Client 1" class="t-avatar">
+                    </div>
+                    <div class="t-body">
+                        <div class="t-stars">★★★★★</div>
+                        <p class="t-quote">“Personalized plans that actually work. I feel amazing.”</p>
+                        <div class="t-author">
+                            <span class="t-name">Client 1</span>
+                            <span class="t-meta">Real results</span>
+                        </div>
+                    </div>
+                </div>
+
+              
+
+
+                <div class="t-card">
+                    <div class="t-media">
+                        <img src="Testimonials/test4.jpeg" alt="Client 4" class="t-avatar">
+                    </div>
+                    <div class="t-body">
+                        <div class="t-stars">★★★★★</div>
+                        <p class="t-quote">“Expert guidance on nutrition and training changed everything.”</p>
+                        <div class="t-author">
+                            <span class="t-name">Client 4</span>
+                            <span class="t-meta">Nutrition + training</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card">
+                    <div class="t-media">
+                        <img src="Testimonials/test2.png" alt="Client 5" class="t-avatar">
+                    </div>
+                    <div class="t-body">
+                        <div class="t-stars">★★★★★</div>
+                        <p class="t-quote">“I finally found a program I can stick to.”</p>
+                        <div class="t-author">
+                            <span class="t-name">Client 5</span>
+                            <span class="t-meta">Consistency wins</span>
+                        </div>
+                    </div>
+                </div>
+
+          
+
+                <div class="t-card">
+                    <div class="t-media">
+                        <img src="Testimonials/test7.jpeg" alt="Client 7" class="t-avatar">
+                    </div>
+                    <div class="t-body">
+                        <div class="t-stars">★★★★★</div>
+                        <p class="t-quote">"More energy, better sleep, and visible progress."</p>
+                        <div class="t-author">
+                            <span class="t-name">Client 7</span>
+                            <span class="t-meta">Lifestyle upgrade</span>
+                        </div>
+                    </div>
+                </div>
+
+              
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2 class="section-title">Ready to Start Your Transformation?</h2>
+                    <p class="contact-description">
+                        Take the first step towards your fitness goals. Book a free consultation and let's create your personalized plan.
+                    </p>
+                    
+                    <div class="contact-features">
+                        <div class="contact-feature">
+                            <div class="feature-icon">✅</div>
+                            <span>Free initial consultation</span>
+                        </div>
+                        <div class="contact-feature">
+                            <div class="feature-icon">✅</div>
+                            <span>Personalized assessment</span>
+                        </div>
+                        <div class="contact-feature">
+                            <div class="feature-icon">✅</div>
+                            <span>Custom plan recommendations</span>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <span>coach@fitcoach.com</span>
+                        </div>
+                        <div class="contact-method">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            <span>(555) 123-4567</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="goals">Fitness Goals</label>
+                        <select id="goals" name="goals" required>
+                            <option value="">Select your primary goal</option>
+                            <option value="weight-loss">Weight Loss</option>
+                            <option value="muscle-gain">Muscle Gain</option>
+                            <option value="strength">Strength Building</option>
+                            <option value="endurance">Endurance</option>
+                            <option value="general">General Fitness</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceType">Service Type</label>
+                        <select id="serviceType" name="serviceType" required onchange="togglePaymentSection()">
+                            <option value="">Select service type</option>
+                            <option value="free-consultation">Free Consultation</option>
+                            <option value="nutrition-plan">Premium Nutrition Plan - 500 EGP</option>
+                            <option value="full-program">Complete Fitness Program - 1200 EGP</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="paymentSection" style="display: none;">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select id="paymentMethod" name="paymentMethod">
+                            <option value="">Select payment method</option>
+                            <option value="instapay">InstaPay</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                            <option value="cash">Cash Payment</option>
+                        </select>
+                        
+                        <div class="payment-info" id="instaPayInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: var(--color-bg); border-radius: 8px; border-left: 4px solid var(--color-primary);">
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--color-primary);">💳 InstaPay Payment Instructions</h4>
+                            <p style="margin: 0 0 0.5rem 0; font-size: 0.9rem;">Please transfer the amount to:</p>
+                            <div style="background: white; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0;">
+                                <strong>InstaPay Number: +201234567890</strong><br>
+                                <span style="color: #6b7280;">Name: FitCoach Services</span>
+                            </div>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #6b7280;">After payment, submit this form and wait for admin confirmation to access your services.</p>
+                        </div>
+
+                        <div class="payment-info" id="bankTransferInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                            <h4 style="margin: 0 0 0.5rem 0; color: #065f46;">🏦 Bank Transfer Details</h4>
+                            <div style="background: white; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0;">
+                                <strong>Bank: National Bank of Egypt</strong><br>
+                                <strong>Account: 123456789012345</strong><br>
+                                <span style="color: #6b7280;">Name: FitCoach Services</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-info" id="cashInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: #fefbeb; border-radius: 8px; border-left: 4px solid #d97706;">
+                            <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">💰 Cash Payment</h4>
+                            <p style="margin: 0; font-size: 0.9rem;">Payment can be made in person during your first session or at our office.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Tell me about yourself and your goals</label>
+                        <textarea id="message" name="message" rows="4" placeholder="Share your current fitness level, challenges, and what you hope to achieve..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-large">
+                        Book Free Consultation
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m9 18 6-6-6-6"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6.5 6.5 11 11"/>
+                            <path d="m21 21-1-1"/>
+                            <path d="m3 3 1 1"/>
+                            <path d="m18 22 4-4"/>
+                            <path d="m2 6 4-4"/>
+                            <path d="m3 10 7-7"/>
+                            <path d="m14 21 7-7"/>
+                        </svg>
+                        <span>FitCoach</span>
+                    </div>
+                    <p class="footer-description">
+                        Professional fitness coaching that delivers real, lasting results. Transform your body and elevate your life.
+                    </p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#services">Personal Training</a></li>
+                            <li><a href="#services">Online Coaching</a></li>
+                            <li><a href="#services">Group Training</a></li>
+                            <li><a href="#services">Nutrition Plans</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Workout Plans</a></li>
+                            <li><a href="#">Nutrition Guide</a></li>
+                            <li><a href="#">Success Stories</a></li>
+                            <li><a href="#">Blog</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Contact</h4>
+                        <ul>
+                            <li>coach@fitcoach.com</li>
+                            <li>(555) 123-4567</li>
+                            <li>Book Consultation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 FitCoach. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">Instagram</a>
+                    <a href="#" class="social-link">Facebook</a>
+                    <a href="#" class="social-link">YouTube</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Authentication Modals -->
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to FitCoach</h2>
+                <button class="modal-close" id="loginModalClose">&times;</button>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large">
+                    Login
+                </button>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="switchToRegister">Register here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Your Account</h2>
+                <button class="modal-close" id="registerModalClose">&times;</button>
+            </div>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number</label>
+                    <input type="tel" id="registerPhone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerGoals">Fitness Goals</label>
+                    <select id="registerGoals" name="goals" required>
+                        <option value="">Select your primary goal</option>
+                        <option value="weight-loss">Weight Loss</option>
+                        <option value="muscle-gain">Muscle Gain</option>
+                        <option value="strength">Strength Building</option>
+                        <option value="endurance">Endurance</option>
+                        <option value="general">General Fitness</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="registerAge">Age</label>
+                        <input type="number" id="registerAge" name="age" min="16" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerWeight">Weight (kg)</label>
+                        <input type="number" id="registerWeight" name="weight" min="30" max="300" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="registerHeight">Height (cm)</label>
+                        <input type="number" id="registerHeight" name="height" min="100" max="250" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" name="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary btn-large">
+                    Create Account
+                </button>
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="switchToLogin">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script >
+        // Authentication System
+        let currentUser = null;
+
+        // Check authentication state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.onAuthStateChanged && window.auth) {
+                window.onAuthStateChanged(window.auth, (user) => {
+                    currentUser = user;
+                    updateAuthUI(user);
+                });
+            }
+            
+            // Wait for Firebase to be ready before attaching event listeners
+            setTimeout(() => {
+                // Event Listeners for Authentication
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    showModal('loginModal');
+                });
+
+                document.getElementById('registerBtn').addEventListener('click', () => {
+                    showModal('registerModal');
+                });
+
+                document.getElementById('logoutBtn').addEventListener('click', async () => {
+                    try {
+                        await window.signOut(window.auth);
+                        hideModal('loginModal');
+                        hideModal('registerModal');
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                    }
+                });
+
+                // Modal close buttons
+                document.getElementById('loginModalClose').addEventListener('click', () => {
+                    hideModal('loginModal');
+                });
+
+                document.getElementById('registerModalClose').addEventListener('click', () => {
+                    hideModal('registerModal');
+                });
+
+                // Close modals when clicking outside
+                document.getElementById('loginModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'loginModal') {
+                        hideModal('loginModal');
+                    }
+                });
+
+                document.getElementById('registerModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'registerModal') {
+                        hideModal('registerModal');
+                    }
+                });
+
+                // Switch between login and register
+                document.getElementById('switchToRegister').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    hideModal('loginModal');
+                    showModal('registerModal');
+                });
+
+                document.getElementById('switchToLogin').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    hideModal('registerModal');
+                    showModal('loginModal');
+                });
+
+                // Login Form Handler
+                document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const email = formData.get('email');
+                    const password = formData.get('password');
+
+                    try {
+                        await window.signInWithEmailAndPassword(window.auth, email, password);
+                        showSuccess('loginModal', 'Login successful!');
+                        setTimeout(() => {
+                            hideModal('loginModal');
+                            e.target.reset();
+                        }, 1500);
+                    } catch (error) {
+                        let errorMessage = 'Login failed. Please try again.';
+                        if (error.code === 'auth/user-not-found') {
+                            errorMessage = 'No account found with this email address.';
+                        } else if (error.code === 'auth/wrong-password') {
+                            errorMessage = 'Incorrect password.';
+                        } else if (error.code === 'auth/invalid-email') {
+                            errorMessage = 'Please enter a valid email address.';
+                        }
+                        showError('loginModal', errorMessage);
+                    }
+                });
+
+                // Register Form Handler
+                document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const name = formData.get('name');
+                    const email = formData.get('email');
+                    const phone = formData.get('phone');
+                    const goals = formData.get('goals');
+                    const age = formData.get('age');
+                    const weight = formData.get('weight');
+                    const height = formData.get('height');
+                    const password = formData.get('password');
+                    const confirmPassword = formData.get('confirmPassword');
+
+                    // Validation
+                    if (password !== confirmPassword) {
+                        showError('registerModal', 'Passwords do not match.');
+                        return;
+                    }
+
+                    if (password.length < 6) {
+                        showError('registerModal', 'Password must be at least 6 characters long.');
+                        return;
+                    }
+
+                    try {
+                        // Check if Firebase is ready
+                        if (!window.auth || !window.createUserWithEmailAndPassword) {
+                            showError('registerModal', 'Firebase is not ready. Please refresh the page and try again.');
+                            return;
+                        }
+
+                        const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
+                        
+                        // Save additional user data to Firestore
+                        if (window.addDoc && window.collection && window.db) {
+                            try {
+                                console.log('Starting Firestore writes...');
+                                
+                                // Save user data to users collection (for authentication purposes)
+                                console.log('Saving to users collection...');
+                                const userDocRef = await window.addDoc(window.collection(window.db, "users"), {
+                                    uid: userCredential.user.uid,
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    goals: goals,
+                                    age: parseInt(age),
+                                    weight: parseFloat(weight),
+                                    height: parseInt(height),
+                                    createdAt: new Date().toISOString(),
+                                    role: 'client'
+                                });
+                                console.log('User saved with ID:', userDocRef.id);
+
+                                // Save client data to clients collection (for admin dashboard)
+                                console.log('Saving to clients collection...');
+                                const clientDocRef = await window.addDoc(window.collection(window.db, "clients"), {
+                                    uid: userCredential.user.uid,
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    goals: goals,
+                                    age: parseInt(age),
+                                    weight: parseFloat(weight),
+                                    height: parseInt(height),
+                                    status: 'registered',
+                                    createdAt: new Date().toISOString(),
+                                    updatedAt: new Date().toISOString(),
+                                    type: 'registered_user'
+                                });
+                                console.log('Client saved with ID:', clientDocRef.id);
+                                
+                                console.log('All Firestore writes completed successfully!');
+                            } catch (firestoreError) {
+                                console.error('Firestore error details:', {
+                                    message: firestoreError.message,
+                                    code: firestoreError.code,
+                                    stack: firestoreError.stack
+                                });
+                                // Still show success if auth worked but Firestore failed
+                                showError('registerModal', `Account created but data save failed: ${firestoreError.message}`);
+                                return;
+                            }
+                        } else {
+                            console.error('Firebase not ready for Firestore writes');
+                            showError('registerModal', 'Firebase not ready. Please refresh and try again.');
+                            return;
+                        }
+
+                        showSuccess('registerModal', 'Account created successfully!');
+                        setTimeout(() => {
+                            hideModal('registerModal');
+                            e.target.reset();
+                        }, 1500);
+                    } catch (error) {
+                        console.error('Registration error:', error);
+                        let errorMessage = 'Registration failed. Please try again.';
+                        if (error.code === 'auth/email-already-in-use') {
+                            errorMessage = 'An account with this email already exists.';
+                        } else if (error.code === 'auth/invalid-email') {
+                            errorMessage = 'Please enter a valid email address.';
+                        } else if (error.code === 'auth/weak-password') {
+                            errorMessage = 'Password is too weak. Please choose a stronger password.';
+                        }
+                        showError('registerModal', errorMessage);
+                    }
+                });
+            }, 1000); // Wait 1 second for Firebase to be ready
+        });
+
+        // Update UI based on authentication state
+        function updateAuthUI(user) {
+            const authButtons = document.getElementById('authButtons');
+            const userMenu = document.getElementById('userMenu');
+            const userEmail = document.getElementById('userEmail');
+            const bookConsultationBtn = document.getElementById('bookConsultationBtn');
+            const adminLink = document.getElementById('adminLink');
+
+            if (user) {
+                // User is logged in
+                authButtons.style.display = 'none';
+                userMenu.style.display = 'flex';
+                userEmail.textContent = user.email;
+                bookConsultationBtn.textContent = 'Book Consultation';
+                
+                // Show admin link for admin users
+                if (user.email === 'admin@fitcoach.com' || user.email.endsWith('@fitcoach.com')) {
+                    adminLink.style.display = 'inline-flex';
+                } else {
+                    adminLink.style.display = 'none';
+                }
+            } else {
+                // User is logged out
+                authButtons.style.display = 'flex';
+                userMenu.style.display = 'none';
+                userEmail.textContent = '';
+                bookConsultationBtn.textContent = 'Book Consultation';
+                adminLink.style.display = 'none';
+            }
+        }
+
+        // Modal Management
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Clear any error messages
+            const errorMessages = modal.querySelectorAll('.error-message, .success-message');
+            errorMessages.forEach(msg => msg.remove());
+        }
+
+        function showError(modalId, message) {
+            const modal = document.getElementById(modalId);
+            const form = modal.querySelector('form');
+            const existingError = modal.querySelector('.error-message');
+            if (existingError) existingError.remove();
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            form.insertBefore(errorDiv, form.firstChild);
+        }
+
+        function showSuccess(modalId, message) {
+            const modal = document.getElementById(modalId);
+            const form = modal.querySelector('form');
+            const existingSuccess = modal.querySelector('.success-message');
+            if (existingSuccess) existingSuccess.remove();
+            
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            form.insertBefore(successDiv, form.firstChild);
+        }
+
+        // Event Listeners for Authentication
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            showModal('loginModal');
+        });
+
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            showModal('registerModal');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await window.signOut(window.auth);
+                hideModal('loginModal');
+                hideModal('registerModal');
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+
+        // Modal close buttons
+        document.getElementById('loginModalClose').addEventListener('click', () => {
+            hideModal('loginModal');
+        });
+
+        document.getElementById('registerModalClose').addEventListener('click', () => {
+            hideModal('registerModal');
+        });
+
+        // Close modals when clicking outside
+        document.getElementById('loginModal').addEventListener('click', (e) => {
+            if (e.target.id === 'loginModal') {
+                hideModal('loginModal');
+            }
+        });
+
+        document.getElementById('registerModal').addEventListener('click', (e) => {
+            if (e.target.id === 'registerModal') {
+                hideModal('registerModal');
+            }
+        });
+
+        // Switch between login and register
+        document.getElementById('switchToRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            hideModal('loginModal');
+            showModal('registerModal');
+        });
+
+        document.getElementById('switchToLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            hideModal('registerModal');
+            showModal('loginModal');
+        });
+
+
+
+        // Mobile Navigation Toggle
+const navToggle = document.getElementById('nav-toggle');
+const navMenu = document.getElementById('nav-menu');
+
+if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        
+        // Animate hamburger menu
+        const spans = navToggle.querySelectorAll('span');
+        if (navMenu.classList.contains('active')) {
+            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+            spans[1].style.opacity = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+        } else {
+            spans[0].style.transform = 'none';
+            spans[1].style.opacity = '1';
+            spans[2].style.transform = 'none';
+        }
+    });
+}
+
+// Close mobile menu when clicking on nav links
+const navLinks = document.querySelectorAll('.nav-link');
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        if (navMenu && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            const spans = navToggle.querySelectorAll('span');
+            spans[0].style.transform = 'none';
+            spans[1].style.opacity = '1';
+            spans[2].style.transform = 'none';
+        }
+    });
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const headerOffset = 70;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Header background change on scroll
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (window.scrollY > 100) {
+        header.style.background = 'var(--color-bg)';
+        header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+    } else {
+        header.style.background = 'var(--color-bg)';
+        header.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+    }
+});
+
+// Payment section toggle function
+function togglePaymentSection() {
+    const serviceType = document.getElementById('serviceType').value;
+    const paymentSection = document.getElementById('paymentSection');
+    const paymentMethod = document.getElementById('paymentMethod');
+    
+    if (serviceType === 'nutrition-plan' || serviceType === 'full-program') {
+        paymentSection.style.display = 'block';
+        paymentMethod.required = true;
+    } else {
+        paymentSection.style.display = 'none';
+        paymentMethod.required = false;
+        paymentMethod.value = '';
+        hideAllPaymentInfo();
+    }
+}
+
+// Payment method selection handler
+function togglePaymentInfo() {
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    hideAllPaymentInfo();
+    
+    if (paymentMethod === 'instapay') {
+        document.getElementById('instaPayInfo').style.display = 'block';
+    } else if (paymentMethod === 'bank-transfer') {
+        document.getElementById('bankTransferInfo').style.display = 'block';
+    } else if (paymentMethod === 'cash') {
+        document.getElementById('cashInfo').style.display = 'block';
+    }
+}
+
+// Hide all payment info sections
+function hideAllPaymentInfo() {
+    document.getElementById('instaPayInfo').style.display = 'none';
+    document.getElementById('bankTransferInfo').style.display = 'none';
+    document.getElementById('cashInfo').style.display = 'none';
+}
+
+// Add event listener for payment method selection
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethodSelect = document.getElementById('paymentMethod');
+    if (paymentMethodSelect) {
+        paymentMethodSelect.addEventListener('change', togglePaymentInfo);
+    }
+});
+
+// Contact Form Handling with Firebase
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // Simple validation
+        if (!data.name || !data.email || !data.goals) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="animate-spin">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m9 12 2 2 4-4"/>
+            </svg>
+            Sending...
+        `;
+        submitBtn.disabled = true;
+        
+        try {
+                    // Determine payment and service details
+        const serviceType = data.serviceType;
+        const paymentMethod = data.paymentMethod;
+        let paymentStatus = 'not-required';
+        let servicePrice = 0;
+        
+        if (serviceType === 'nutrition-plan') {
+            servicePrice = 500;
+            paymentStatus = paymentMethod ? 'pending' : 'required';
+        } else if (serviceType === 'full-program') {
+            servicePrice = 1200;
+            paymentStatus = paymentMethod ? 'pending' : 'required';
+        }
+
+        // Add timestamp and user info to data
+        const formDataWithTimestamp = {
+            ...data,
+            timestamp: new Date().toISOString(),
+            status: 'new',
+            userId: currentUser ? currentUser.uid : null,
+            userEmail: currentUser ? currentUser.email : data.email,
+            serviceType: serviceType,
+            servicePrice: servicePrice,
+            paymentMethod: paymentMethod,
+            paymentStatus: paymentStatus,
+            paymentConfirmedAt: null,
+            paymentConfirmedBy: null
+        };
+            
+            // Save to Firebase Firestore
+            if (window.db && window.addDoc && window.collection) {
+                await window.addDoc(window.collection(window.db, "consultations"), formDataWithTimestamp);
+                
+                // Show appropriate success message based on service type
+                let successMessage = '';
+                if (serviceType === 'free-consultation') {
+                    successMessage = 'Thank you for your message! I\'ll get back to you within 24 hours to schedule your free consultation.';
+                } else if (paymentMethod === 'instapay') {
+                    successMessage = `Thank you for your request! Please complete your InstaPay payment of ${servicePrice} EGP to +201234567890. Once you've made the payment, our admin will confirm it and you'll receive access to your ${serviceType === 'nutrition-plan' ? 'nutrition plan' : 'complete fitness program'}.`;
+                } else if (paymentMethod) {
+                    successMessage = `Thank you for your request! Please complete your payment of ${servicePrice} EGP using ${paymentMethod === 'bank-transfer' ? 'bank transfer' : 'cash payment'}. Once payment is confirmed, you'll receive access to your services.`;
+                } else {
+                    successMessage = 'Thank you for your request! Please select a payment method to proceed.';
+                }
+                
+                alert(successMessage);
+                this.reset();
+                togglePaymentSection(); // Reset payment section visibility
+            } else {
+                // Fallback if Firebase is not loaded
+                console.log('Form data:', formDataWithTimestamp);
+                alert('Thank you for your message! I\'ll get back to you within 24 hours to schedule your free consultation.');
+                this.reset();
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('There was an error submitting your form. Please try again or contact us directly.');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+}
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animations
+document.addEventListener('DOMContentLoaded', () => {
+    const animatedElements = document.querySelectorAll('.service-card, .testimonial-card, .hero-text, .about-text');
+    
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(el);
+    });
+});
+
+// Counter animation for stats
+function animateCounter(element, target, duration) {
+    let start = 0;
+    const increment = target / (duration / 16);
+    
+    const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(start);
+        }
+    }, 16);
+}
+
+// Animate counters when they come into view
+const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const statNumber = entry.target.querySelector('.stat-number');
+            if (statNumber && !statNumber.classList.contains('animated')) {
+                statNumber.classList.add('animated');
+                const text = statNumber.textContent;
+                const number = parseInt(text.replace(/\D/g, ''));
+                const suffix = text.replace(/\d/g, '');
+                
+                animateCounter(statNumber, number, 2000);
+                setTimeout(() => {
+                    statNumber.textContent = number + suffix;
+                }, 2000);
+            }
+        }
+    });
+}, { threshold: 0.5 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const stats = document.querySelectorAll('.stat');
+    stats.forEach(stat => statsObserver.observe(stat));
+});
+
+// Add loading state to buttons
+document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        if (this.textContent.includes('Book') || this.textContent.includes('Start')) {
+            // Add ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+            
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+    });
+});
+
+// Add CSS animation for ripple effect
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+`;
+document.head.appendChild(style);
+
+// Shopping Cart System
+let cart = [];
+
+function updateQuantity(serviceId, change) {
+    const qtyElement = document.getElementById(serviceId + '-qty');
+    let currentQty = parseInt(qtyElement.textContent);
+    currentQty = Math.max(1, currentQty + change);
+    qtyElement.textContent = currentQty;
+}
+
+function addToCart(serviceId, serviceName, price, period) {
+    const quantity = parseInt(document.getElementById(serviceId + '-qty').textContent);
+    
+    // Check if item already exists in cart
+    const existingItemIndex = cart.findIndex(item => item.serviceId === serviceId);
+    
+    if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity += quantity;
+    } else {
+        cart.push({
+            serviceId,
+            serviceName,
+            price,
+            period,
+            quantity
+        });
+    }
+    
+    updateCartUI();
+    showCartAnimation();
+    
+    // Reset quantity selector
+    document.getElementById(serviceId + '-qty').textContent = '1';
+}
+
+function updateCartUI() {
+    const cartCount = document.getElementById('cartCount');
+    const cartItems = document.getElementById('cartItems');
+    const emptyCart = document.getElementById('emptyCart');
+    const cartFooter = document.getElementById('cartFooter');
+    const cartTotal = document.getElementById('cartTotal');
+    
+    // Update cart count
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCount.textContent = totalItems;
+    cartCount.style.display = totalItems > 0 ? 'block' : 'none';
+    
+    if (cart.length === 0) {
+        emptyCart.style.display = 'block';
+        cartItems.style.display = 'none';
+        cartFooter.style.display = 'none';
+        return;
+    }
+    
+    emptyCart.style.display = 'none';
+    cartItems.style.display = 'block';
+    cartFooter.style.display = 'block';
+    
+    // Update cart items
+    cartItems.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+            <div class="cart-item-info">
+                <h4>${item.serviceName}</h4>
+                <p>$${item.price}/${item.period}</p>
+            </div>
+            <div class="cart-item-controls">
+                <button onclick="changeCartQuantity(${index}, -1)">-</button>
+                <span>${item.quantity}</span>
+                <button onclick="changeCartQuantity(${index}, 1)">+</button>
+                <button onclick="removeFromCart(${index})" class="remove-btn">✕</button>
+            </div>
+            <div class="cart-item-total">
+                $${item.price * item.quantity}
+            </div>
+        </div>
+    `).join('');
+    
+    // Update total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    cartTotal.textContent = `$${total}`;
+}
+
+function changeCartQuantity(index, change) {
+    cart[index].quantity = Math.max(1, cart[index].quantity + change);
+    updateCartUI();
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartUI();
+}
+
+function toggleCart() {
+    const cartModal = document.getElementById('cartModal');
+    cartModal.style.display = cartModal.style.display === 'block' ? 'none' : 'block';
+}
+
+function showCartAnimation() {
+    const cartIcon = document.querySelector('.cart-toggle');
+    cartIcon.style.animation = 'bounce 0.5s ease';
+    setTimeout(() => {
+        cartIcon.style.animation = '';
+    }, 500);
+}
+
+function proceedToCheckout() {
+    if (cart.length === 0) return;
+    
+    // Check if user is logged in before allowing checkout
+    if (!window.auth || !window.auth.currentUser || !window.auth.currentUser.email) {
+        showLoginRequiredModal();
+        return;
+    }
+    
+    const checkoutModal = document.getElementById('checkoutModal');
+    const checkoutItems = document.getElementById('checkoutItems');
+    const checkoutTotal = document.getElementById('checkoutTotal');
+    
+    // Populate checkout items
+    checkoutItems.innerHTML = cart.map(item => `
+        <div class="checkout-item">
+            <span>${item.serviceName} × ${item.quantity}</span>
+            <span>$${item.price * item.quantity}</span>
+        </div>
+    `).join('');
+    
+    // Update total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    checkoutTotal.textContent = `$${total}`;
+    
+    // Auto-fill email since user is guaranteed to be logged in
+    setTimeout(() => {
+        const emailInput = document.getElementById('customerEmail');
+        const emailNote = document.getElementById('emailNote');
+        
+        // User is guaranteed to be logged in at this point
+        console.log('🔐 User is logged in, auto-filling email:', window.auth.currentUser.email);
+        emailInput.value = window.auth.currentUser.email;
+        emailInput.readOnly = true;
+        emailInput.style.backgroundColor = '#f9fafb';
+        emailInput.style.cursor = 'not-allowed';
+        emailNote.innerHTML = '✅ Using your logged-in email address';
+        emailNote.style.display = 'block';
+    }, 100);
+    
+    // Show checkout modal
+    checkoutModal.style.display = 'block';
+    toggleCart(); // Close cart modal
+}
+
+function closeCheckout() {
+    document.getElementById('checkoutModal').style.display = 'none';
+}
+
+// Login required modal functions
+function showLoginRequiredModal() {
+    console.log('🔐 User not logged in, showing login required modal');
+    const loginRequiredModal = document.getElementById('loginRequiredModal');
+    loginRequiredModal.style.display = 'block';
+    
+    // Close cart modal if open
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal.style.display === 'block') {
+        cartModal.style.display = 'none';
+    }
+}
+
+function closeLoginRequired() {
+    document.getElementById('loginRequiredModal').style.display = 'none';
+}
+
+async function submitOrder() {
+    const customerName = document.getElementById('customerName').value;
+    const customerEmail = document.getElementById('customerEmail').value;
+    const customerPhone = document.getElementById('customerPhone').value;
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    
+    if (!customerName || !customerEmail || !customerPhone) {
+        alert('Please fill in all contact information.');
+        return;
+    }
+    
+    if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+    }
+    
+    try {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        const orderData = {
+            timestamp: new Date().toISOString(),
+            customerName,
+            customerEmail,
+            customerPhone,
+            paymentMethod,
+            items: cart,
+            total,
+            paymentStatus: 'pending',
+            status: 'new',
+            type: 'coaching-program-order'
+        };
+        
+        // Save to Firebase - use "orders" collection for coaching program orders
+        if (window.db && window.addDoc && window.collection) {
+            await window.addDoc(window.collection(window.db, "orders"), orderData);
+            console.log('✅ Order saved to "orders" collection:', orderData);
+        } else {
+            console.log('Order data (Firebase not available):', orderData);
+        }
+        
+        // Show success message (user is guaranteed to be logged in)
+        let successMessage = `🎉 Order submitted successfully!
+
+📋 Order Summary:
+${cart.map(item => `• ${item.serviceName} × ${item.quantity} = $${item.price * item.quantity}`).join('\n')}
+
+💰 Total: $${total}`;
+
+        if (paymentMethod === 'instapay') {
+            successMessage += `
+
+💳 InstaPay Payment Instructions:
+Transfer $${total} to: +201234567890
+Name: FitCoach Services
+
+Once payment is completed, our admin will confirm your order and contact you within 24 hours.`;
+        } else if (paymentMethod === 'bank-transfer') {
+            successMessage += `
+
+🏦 Bank Transfer Details:
+Bank: National Bank of Egypt
+Account: 123456789012345
+Amount: $${total}
+
+Please include your name in the transfer reference.`;
+        } else {
+            successMessage += `
+
+💰 Cash Payment:
+Please prepare $${total} for your first session or visit our office.`;
+        }
+
+        successMessage += `
+
+📱 Track Your Order:
+Visit your client dashboard to track the payment status and order progress.
+Your order will appear in the "My Orders" section within seconds.`;
+        
+        alert(successMessage);
+        
+        // Clear cart and close modals
+        cart = [];
+        updateCartUI();
+        closeCheckout();
+        
+        // Reset form
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        // Note: Email remains filled with logged-in user's email
+        
+    } catch (error) {
+        console.error('Error submitting order:', error);
+        alert('Error submitting order. Please try again.');
+    }
+}
+
+// Close modals when clicking outside
+document.addEventListener('click', function(e) {
+    const cartModal = document.getElementById('cartModal');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const loginRequiredModal = document.getElementById('loginRequiredModal');
+    
+    if (e.target === cartModal) {
+        cartModal.style.display = 'none';
+    }
+    if (e.target === checkoutModal) {
+        checkoutModal.style.display = 'none';
+    }
+    if (e.target === loginRequiredModal) {
+        loginRequiredModal.style.display = 'none';
+    }
+});
+
+    </script>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>🛒 Shopping Cart</h3>
+                <button class="cart-close" onclick="toggleCart()">&times;</button>
+            </div>
+            
+            <div class="cart-body" id="cartBody">
+                <div class="empty-cart" id="emptyCart">
+                    <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                        <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <p>Your cart is empty</p>
+                        <p style="font-size: 0.875rem;">Add some coaching programs to get started!</p>
+                    </div>
+                </div>
+                
+                <div class="cart-items" id="cartItems" style="display: none;">
+                    <!-- Cart items will be populated here -->
+                </div>
+            </div>
+            
+            <div class="cart-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-size: 1.25rem; font-weight: 600;">Total:</span>
+                        <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary);" id="cartTotal">$0</span>
+                    </div>
+                    <button class="btn btn-primary btn-large" onclick="proceedToCheckout()" style="width: 100%;">
+                        💳 Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-content">
+            <div class="checkout-header">
+                <h3>💳 Checkout</h3>
+                <button class="checkout-close" onclick="closeCheckout()">&times;</button>
+            </div>
+            
+            <div class="checkout-body">
+                <div class="order-summary">
+                    <h4>Order Summary</h4>
+                    <div id="checkoutItems"></div>
+                    <div class="checkout-total">
+                        <span>Total: <strong id="checkoutTotal">$0</strong></span>
+                    </div>
+                </div>
+                
+                <div class="payment-section">
+                    <h4>Payment Method</h4>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="instapay" checked>
+                            <span>💳 InstaPay</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="bank-transfer">
+                            <span>🏦 Bank Transfer</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="cash">
+                            <span>💰 Cash Payment</span>
+                        </label>
+                    </div>
+                    
+                    <div class="customer-info">
+                        <h4>Contact Information</h4>
+                        <div class="form-group">
+                            <input type="text" id="customerName" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="customerEmail" placeholder="Email Address" required>
+                            <div id="emailNote" style="display: block; font-size: 0.875rem; color: #059669; margin-top: 0.25rem;">
+                                ✅ Using your logged-in email address
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="checkout-footer">
+                <button class="btn btn-outline" onclick="closeCheckout()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitOrder()">
+                    <i class="fas fa-credit-card"></i> Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Required Modal -->
+    <div class="login-required-modal" id="loginRequiredModal">
+        <div class="login-required-content">
+            <div class="login-required-header">
+                <h3>🔐 Login Required</h3>
+                <button class="login-required-close" onclick="closeLoginRequired()">&times;</button>
+            </div>
+            
+            <div class="login-required-body">
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
+                    <h3 style="color: #1f2937; margin-bottom: 1rem;">Login Required to Complete Order</h3>
+                    <p style="color: #6b7280; margin-bottom: 2rem; line-height: 1.6;">
+                        To ensure proper order tracking and account management, you must be logged in to place an order.
+                    </p>
+                    
+                    <div style="background: var(--color-bg); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem;">
+                        <h4 style="color: var(--color-primary); margin: 0 0 1rem 0;">✨ Benefits of Logging In:</h4>
+                        <ul style="text-align: left; color: var(--color-primary); line-height: 1.8; margin: 0; padding-left: 1.5rem;">
+                            <li>Track your order status in real-time</li>
+                            <li>View order history and payment confirmations</li>
+                            <li>Access your nutrition plans when ready</li>
+                            <li>Manage your profile and preferences</li>
+                            <li>Receive personalized fitness guidance</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="client.html" style="background: var(--color-primary); color: white; padding: 0.75rem 2rem; border-radius: 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+                            🔑 Login to Account
+                        </a>
+                        <button onclick="closeLoginRequired()" style="background: #6b7280; color: white; padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            ← Continue Shopping
+                        </button>
+                    </div>
+                    
+                    <p style="margin-top: 1.5rem; font-size: 0.875rem; color: #6b7280;">
+                        Don't have an account? <a href="client.html" style="color: var(--color-primary); text-decoration: none;">Create one now - it's free!</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
