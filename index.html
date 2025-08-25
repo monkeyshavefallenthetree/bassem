@@ -1742,9 +1742,7 @@ p {
                     <div class="service-price">
                         <span class="price" id="programPrice">3000 EGP</span>
                         <span class="period">/3 months</span>
-                        <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;" id="priceNote">
-                            🇪🇬 Egyptian residents pricing
-                        </div>
+                        
                     </div>
                     <div class="service-actions">
                         <div class="quantity-selector">
@@ -1782,6 +1780,21 @@ p {
                         <div class="t-author">
                             <span class="t-name">Client 1</span>
                             <span class="t-meta">Real results</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                        <div class="t-card">
+                    <div class="t-media">
+                        <img src="tran.jpeg" alt="Client 4" class="t-avatar">
+                    </div>
+                    <div class="t-body">
+                        <div class="t-stars">★★★★★</div>
+                        <p class="t-quote">“Expert guidance on nutrition and training changed everything.”</p>
+                        <div class="t-author">
+                            <span class="t-name">Client 4</span>
+                            <span class="t-meta">Nutrition + training</span>
                         </div>
                     </div>
                 </div>
@@ -2823,20 +2836,17 @@ document.head.appendChild(style);
         // Function to update pricing based on location
         function updatePricingBasedOnLocation() {
             const programPrice = document.getElementById('programPrice');
-            const priceNote = document.getElementById('priceNote');
             const fitnessProgramOption = document.getElementById('fitnessProgramOption');
             
             if (userLocation === 'EG') {
                 // Egypt - show only Egyptian pricing
                 programPrice.textContent = '3000 EGP';
-                priceNote.innerHTML = '🇪🇬 <strong>Egyptian residents pricing</strong>';
                 if (fitnessProgramOption) {
                     fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - 3000 EGP';
                 }
             } else {
                 // International - show only international pricing
                 programPrice.textContent = '$300';
-                priceNote.innerHTML = '🌍 <strong>International pricing</strong>';
                 if (fitnessProgramOption) {
                     fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - $300';
                 }
