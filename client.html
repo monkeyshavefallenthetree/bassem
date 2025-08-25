@@ -606,6 +606,8 @@
             color: #0c4a6e;
         }
 
+
+
         .exercise-actions {
             display: flex;
             gap: 1rem;
@@ -1915,8 +1917,11 @@
                                             <span style="font-weight: 600;">${exercise.videoFile}</span>
                                         </div>
                                         <p class="exercise-video-text">
-                                            Video demonstration available for proper form guidance
+                                            Watch the video demonstration to learn proper form and technique for this exercise.
                                         </p>
+                                        <button onclick="console.log('Button clicked, videoFile:', '${exercise.videoFile}'); viewExerciseVideo('${exercise.videoFile}')" class="btn btn-primary" style="margin-top: 0.75rem;">
+                                            <i class="fas fa-play"></i> Watch Video
+                                        </button>
                                     </div>
                                 </div>
                                 ` : ''}
@@ -2082,13 +2087,16 @@
                         <div style="margin-bottom: 1.5rem;">
                             <h4 style="margin: 0 0 0.75rem 0; color: #374151;">🎥 Video Demonstration</h4>
                             <div style="background: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #0ea5e9;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem; color: #0c4a6e; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; color: #0c4a6e; margin-bottom: 0.75rem;">
                                     <i class="fas fa-video" style="color: #0ea5e9;"></i>
                                     <span style="font-weight: 600;">${exercise.videoFile}</span>
                                 </div>
-                                <p style="margin: 0; font-size: 0.875rem; color: #0c4a6e;">
+                                <p style="margin: 0 0 0.75rem; font-size: 0.875rem; color: #0c4a6e;">
                                     Watch the video demonstration to learn proper form and technique for this exercise.
                                 </p>
+                                <button onclick="console.log('Modal button clicked, videoFile:', '${exercise.videoFile}'); viewExerciseVideo('${exercise.videoFile}')" style="background: #0ea5e9; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-play"></i> Watch Video
+                                </button>
                             </div>
                         </div>
                         ` : ''}
@@ -2123,6 +2131,91 @@
                 modal.remove();
             }
         }
+
+        // Handle video loading errors
+        function handleVideoError(videoElement, videoFile) {
+            videoElement.style.display = 'none';
+            const container = videoElement.parentElement;
+            container.innerHTML = `
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; text-align: center;">
+                    <div style="color: #dc2626; font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div>
+                    <p style="margin: 0; color: #dc2626; font-size: 0.875rem;">
+                        Video file "${videoFile}" not found. Please contact your coach.
+                    </p>
+                </div>
+            `;
+        }
+
+        // View exercise video in modal (same as admin dashboard)
+        function viewExerciseVideo(videoFile) {
+            console.log('viewExerciseVideo called with:', videoFile);
+            
+            try {
+                if (!videoFile) {
+                    alert('No video file specified for this exercise.');
+                    return;
+                }
+                
+                // Create a modal to show the video
+                const videoModal = document.createElement('div');
+                videoModal.className = 'modal active';
+                videoModal.style.cssText = `
+                    display: flex;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    z-index: 2000;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                
+                videoModal.innerHTML = `
+                    <div style="background: white; border-radius: 1rem; padding: 2rem; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0; color: #1f2937;">Exercise Video: ${videoFile}</h3>
+                            <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;">&times;</button>
+                        </div>
+                        <div style="background: #000; border-radius: 0.5rem; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <video controls style="width: 100%; height: 100%; border-radius: 0.5rem;">
+                                <source src="videos/${videoFile}" type="video/webm">
+                                <source src="videos/${videoFile}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <p style="color: #6b7280; font-size: 0.875rem; text-align: center;">
+                            If the video doesn't play, make sure the file "${videoFile}" exists in the videos folder.
+                        </p>
+                    </div>
+                `;
+                
+                document.body.appendChild(videoModal);
+                
+                // Close modal when clicking outside
+                videoModal.addEventListener('click', (e) => {
+                    if (e.target === videoModal) {
+                        videoModal.remove();
+                    }
+                });
+                
+                console.log('Video modal created successfully');
+                
+            } catch (error) {
+                console.error('Error creating video modal:', error);
+                alert('Error opening video. Please try again.');
+            }
+        }
+
+        // Make viewExerciseVideo globally accessible
+        window.viewExerciseVideo = viewExerciseVideo;
+        
+        // Test function to verify video modal works
+        window.testVideoModal = function() {
+            console.log('Testing video modal...');
+            viewExerciseVideo('test-video.webm');
+        };
 
         // Load nutrition plans for the client
         async function loadNutritionPlans() {
