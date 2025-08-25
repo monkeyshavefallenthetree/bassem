@@ -1715,93 +1715,44 @@ p {
     <section id="services" class="services">
         <div class="container">
             <div class="services-header">
-                <h2 class="section-title">Coaching Programs</h2>
+                <h2 class="section-title">Complete Fitness Coaching Program</h2>
                 <p class="section-description">
-                    Choose the perfect program to match your fitness goals and lifestyle
+                    Transform your body and lifestyle with our comprehensive 3-month coaching program
                 </p>
             </div>
             
             <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🏋️‍♂️</div>
-                    <h3 class="service-title">Personal Training</h3>
+                <div class="service-card featured" style="max-width: 600px; margin: 0 auto; grid-column: 1 / -1;">
+                    <div class="featured-badge">Premium Program</div>
+                    <div class="service-icon">💪</div>
+                    <h3 class="service-title">Complete Fitness Coaching Program</h3>
                     <p class="service-description">
-                        One-on-one sessions tailored to your specific goals with personalized workout plans and direct guidance.
+                        Comprehensive 3-month fitness coaching program with personalized workout plans, nutrition guidance, and continuous support to transform your body and lifestyle.
                     </p>
                     <ul class="service-features">
-                        <li>Custom workout plans</li>
-                        <li>Form correction & technique</li>
-                        <li>Progress tracking</li>
-                        <li>Flexible scheduling</li>
+                        <li>Personalized workout plans</li>
+                        <li>Custom nutrition meal plans</li>
+                        <li>Weekly progress check-ins</li>
+                        <li>24/7 support via app</li>
+                        <li>Form correction & technique guidance</li>
+                        <li>Progress tracking & analytics</li>
+                        <li>Lifestyle coaching & motivation</li>
+                        <li>Access to exclusive workout library</li>
                     </ul>
                     <div class="service-price">
-                        <span class="price">$89</span>
-                        <span class="period">/session</span>
+                        <span class="price" id="programPrice">3000 EGP</span>
+                        <span class="period">/3 months</span>
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;" id="priceNote">
+                            🇪🇬 Egyptian residents pricing
+                        </div>
                     </div>
                     <div class="service-actions">
                         <div class="quantity-selector">
-                            <button type="button" onclick="updateQuantity('personal-training', -1)">-</button>
-                            <span id="personal-training-qty">1</span>
-                            <button type="button" onclick="updateQuantity('personal-training', 1)">+</button>
+                            <button type="button" onclick="updateQuantity('fitness-program', -1)">-</button>
+                            <span id="fitness-program-qty">1</span>
+                            <button type="button" onclick="updateQuantity('fitness-program', 1)">+</button>
                         </div>
-                        <button class="btn btn-cart" onclick="addToCart('personal-training', 'Personal Training', 89, 'session')">
-                            <i class="fas fa-cart-plus"></i> Add to Cart
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="service-card featured">
-                    <div class="featured-badge">Most Popular</div>
-                    <div class="service-icon">📱</div>
-                    <h3 class="service-title">Online Coaching</h3>
-                    <p class="service-description">
-                        Comprehensive online program with workout plans, nutrition guidance, and weekly check-ins.
-                    </p>
-                    <ul class="service-features">
-                        <li>Custom training program</li>
-                        <li>Nutrition meal plans</li>
-                        <li>Weekly video calls</li>
-                        <li>24/7 app support</li>
-                    </ul>
-                    <div class="service-price">
-                        <span class="price">$197</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <div class="service-actions">
-                        <div class="quantity-selector">
-                            <button type="button" onclick="updateQuantity('online-coaching', -1)">-</button>
-                            <span id="online-coaching-qty">1</span>
-                            <button type="button" onclick="updateQuantity('online-coaching', 1)">+</button>
-                        </div>
-                        <button class="btn btn-cart btn-primary" onclick="addToCart('online-coaching', 'Online Coaching', 197, 'month')">
-                            <i class="fas fa-cart-plus"></i> Add to Cart
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="service-card">
-                    <div class="service-icon">👥</div>
-                    <h3 class="service-title">Group Training</h3>
-                    <p class="service-description">
-                        Small group sessions combining the motivation of group fitness with personalized attention.
-                    </p>
-                    <ul class="service-features">
-                        <li>Small groups (4-6 people)</li>
-                        <li>Varied workout styles</li>
-                        <li>Motivating environment</li>
-                        <li>Cost-effective option</li>
-                    </ul>
-                    <div class="service-price">
-                        <span class="price">$39</span>
-                        <span class="period">/session</span>
-                    </div>
-                    <div class="service-actions">
-                        <div class="quantity-selector">
-                            <button type="button" onclick="updateQuantity('group-training', -1)">-</button>
-                            <span id="group-training-qty">1</span>
-                            <button type="button" onclick="updateQuantity('group-training', 1)">+</button>
-                        </div>
-                        <button class="btn btn-cart" onclick="addToCart('group-training', 'Group Training', 39, 'session')">
+                        <button class="btn btn-cart btn-primary" onclick="addToCart('fitness-program', 'Complete Fitness Coaching Program', 3000, '3 months', 'EGP')">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
@@ -1962,8 +1913,7 @@ p {
                         <select id="serviceType" name="serviceType" required onchange="togglePaymentSection()">
                             <option value="">Select service type</option>
                             <option value="free-consultation">Free Consultation</option>
-                            <option value="nutrition-plan">Premium Nutrition Plan - 500 EGP</option>
-                            <option value="full-program">Complete Fitness Program - 1200 EGP</option>
+                            <option value="fitness-program" id="fitnessProgramOption">Complete Fitness Coaching Program</option>
                         </select>
                     </div>
 
@@ -2043,10 +1993,10 @@ p {
                     <div class="footer-column">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="#services">Personal Training</a></li>
-                            <li><a href="#services">Online Coaching</a></li>
-                            <li><a href="#services">Group Training</a></li>
-                            <li><a href="#services">Nutrition Plans</a></li>
+                            <li><a href="#services">Complete Fitness Coaching Program</a></li>
+                            <li><a href="#services">Personalized Workout Plans</a></li>
+                            <li><a href="#services">Nutrition Guidance</a></li>
+                            <li><a href="#services">Progress Tracking</a></li>
                         </ul>
                     </div>
                     
@@ -2180,6 +2130,9 @@ p {
 
         // Check authentication state on page load
         document.addEventListener('DOMContentLoaded', () => {
+            // Detect user location for pricing
+            detectUserLocation();
+            
             if (window.onAuthStateChanged && window.auth) {
                 window.onAuthStateChanged(window.auth, (user) => {
                     currentUser = user;
@@ -2580,7 +2533,7 @@ function togglePaymentSection() {
     const paymentSection = document.getElementById('paymentSection');
     const paymentMethod = document.getElementById('paymentMethod');
     
-    if (serviceType === 'nutrition-plan' || serviceType === 'full-program') {
+    if (serviceType === 'fitness-program') {
         paymentSection.style.display = 'block';
         paymentMethod.required = true;
     } else {
@@ -2661,12 +2614,17 @@ if (contactForm) {
         const paymentMethod = data.paymentMethod;
         let paymentStatus = 'not-required';
         let servicePrice = 0;
+        let serviceCurrency = 'EGP';
         
-        if (serviceType === 'nutrition-plan') {
-            servicePrice = 500;
-            paymentStatus = paymentMethod ? 'pending' : 'required';
-        } else if (serviceType === 'full-program') {
-            servicePrice = 1200;
+        if (serviceType === 'fitness-program') {
+            // Use location-based pricing
+            if (userLocation === 'EG') {
+                servicePrice = 3000;
+                serviceCurrency = 'EGP';
+            } else {
+                servicePrice = 300;
+                serviceCurrency = 'USD';
+            }
             paymentStatus = paymentMethod ? 'pending' : 'required';
         }
 
@@ -2694,9 +2652,9 @@ if (contactForm) {
                 if (serviceType === 'free-consultation') {
                     successMessage = 'Thank you for your message! I\'ll get back to you within 24 hours to schedule your free consultation.';
                 } else if (paymentMethod === 'instapay') {
-                    successMessage = `Thank you for your request! Please complete your InstaPay payment of ${servicePrice} EGP to +201234567890. Once you've made the payment, our admin will confirm it and you'll receive access to your ${serviceType === 'nutrition-plan' ? 'nutrition plan' : 'complete fitness program'}.`;
+                    successMessage = `Thank you for your request! Please complete your InstaPay payment of ${servicePrice} ${serviceCurrency} to +201234567890. Once you've made the payment, our admin will confirm it and you'll receive access to your complete fitness coaching program.`;
                 } else if (paymentMethod) {
-                    successMessage = `Thank you for your request! Please complete your payment of ${servicePrice} EGP using ${paymentMethod === 'bank-transfer' ? 'bank transfer' : 'cash payment'}. Once payment is confirmed, you'll receive access to your services.`;
+                    successMessage = `Thank you for your request! Please complete your payment of ${servicePrice} ${serviceCurrency} using ${paymentMethod === 'bank-transfer' ? 'bank transfer' : 'cash payment'}. Once payment is confirmed, you'll receive access to your complete fitness coaching program.`;
                 } else {
                     successMessage = 'Thank you for your request! Please select a payment method to proceed.';
                 }
@@ -2844,40 +2802,89 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Shopping Cart System
-let cart = [];
+        // Shopping Cart System
+        let cart = [];
+        let userLocation = 'EGYPT'; // Default to Egypt, will be updated based on user's location
 
-function updateQuantity(serviceId, change) {
-    const qtyElement = document.getElementById(serviceId + '-qty');
-    let currentQty = parseInt(qtyElement.textContent);
-    currentQty = Math.max(1, currentQty + change);
-    qtyElement.textContent = currentQty;
-}
+        // Function to detect user's location and update pricing
+        async function detectUserLocation() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                userLocation = data.country_code;
+                updatePricingBasedOnLocation();
+            } catch (error) {
+                console.log('Could not detect location, defaulting to Egypt');
+                userLocation = 'EGYPT';
+                updatePricingBasedOnLocation();
+            }
+        }
 
-function addToCart(serviceId, serviceName, price, period) {
-    const quantity = parseInt(document.getElementById(serviceId + '-qty').textContent);
-    
-    // Check if item already exists in cart
-    const existingItemIndex = cart.findIndex(item => item.serviceId === serviceId);
-    
-    if (existingItemIndex > -1) {
-        cart[existingItemIndex].quantity += quantity;
-    } else {
-        cart.push({
-            serviceId,
-            serviceName,
-            price,
-            period,
-            quantity
-        });
-    }
-    
-    updateCartUI();
-    showCartAnimation();
-    
-    // Reset quantity selector
-    document.getElementById(serviceId + '-qty').textContent = '1';
-}
+        // Function to update pricing based on location
+        function updatePricingBasedOnLocation() {
+            const programPrice = document.getElementById('programPrice');
+            const priceNote = document.getElementById('priceNote');
+            const fitnessProgramOption = document.getElementById('fitnessProgramOption');
+            
+            if (userLocation === 'EG') {
+                // Egypt - show only Egyptian pricing
+                programPrice.textContent = '3000 EGP';
+                priceNote.innerHTML = '🇪🇬 <strong>Egyptian residents pricing</strong>';
+                if (fitnessProgramOption) {
+                    fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - 3000 EGP';
+                }
+            } else {
+                // International - show only international pricing
+                programPrice.textContent = '$300';
+                priceNote.innerHTML = '🌍 <strong>International pricing</strong>';
+                if (fitnessProgramOption) {
+                    fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - $300';
+                }
+            }
+        }
+
+        function updateQuantity(serviceId, change) {
+            const qtyElement = document.getElementById(serviceId + '-qty');
+            let currentQty = parseInt(qtyElement.textContent);
+            currentQty = Math.max(1, currentQty + change);
+            qtyElement.textContent = currentQty;
+        }
+
+        function addToCart(serviceId, serviceName, price, period, currency = 'EGP') {
+            const quantity = parseInt(document.getElementById(serviceId + '-qty').textContent);
+            
+            // Determine actual price based on user location
+            let actualPrice = price;
+            let actualCurrency = currency;
+            
+            if (userLocation !== 'EG') {
+                // International pricing
+                actualPrice = 300;
+                actualCurrency = 'USD';
+            }
+            
+            // Check if item already exists in cart
+            const existingItemIndex = cart.findIndex(item => item.serviceId === serviceId);
+            
+            if (existingItemIndex > -1) {
+                cart[existingItemIndex].quantity += quantity;
+            } else {
+                cart.push({
+                    serviceId,
+                    serviceName,
+                    price: actualPrice,
+                    period,
+                    quantity,
+                    currency: actualCurrency
+                });
+            }
+            
+            updateCartUI();
+            showCartAnimation();
+            
+            // Reset quantity selector
+            document.getElementById(serviceId + '-qty').textContent = '1';
+        }
 
 function updateCartUI() {
     const cartCount = document.getElementById('cartCount');
@@ -2907,7 +2914,7 @@ function updateCartUI() {
         <div class="cart-item">
             <div class="cart-item-info">
                 <h4>${item.serviceName}</h4>
-                <p>$${item.price}/${item.period}</p>
+                <p>${item.currency === 'USD' ? '$' : ''}${item.price}${item.currency === 'EGP' ? ' EGP' : ''}/${item.period}</p>
             </div>
             <div class="cart-item-controls">
                 <button onclick="changeCartQuantity(${index}, -1)">-</button>
@@ -2916,14 +2923,15 @@ function updateCartUI() {
                 <button onclick="removeFromCart(${index})" class="remove-btn">✕</button>
             </div>
             <div class="cart-item-total">
-                $${item.price * item.quantity}
+                ${item.currency === 'USD' ? '$' : ''}${item.price * item.quantity}${item.currency === 'EGP' ? ' EGP' : ''}
             </div>
         </div>
     `).join('');
     
     // Update total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    cartTotal.textContent = `$${total}`;
+    const currency = cart.length > 0 ? cart[0].currency : 'EGP';
+    cartTotal.textContent = `${currency === 'USD' ? '$' : ''}${total}${currency === 'EGP' ? ' EGP' : ''}`;
 }
 
 function changeCartQuantity(index, change) {
@@ -2966,13 +2974,14 @@ function proceedToCheckout() {
     checkoutItems.innerHTML = cart.map(item => `
         <div class="checkout-item">
             <span>${item.serviceName} × ${item.quantity}</span>
-            <span>$${item.price * item.quantity}</span>
+            <span>${item.currency === 'USD' ? '$' : ''}${item.price * item.quantity}${item.currency === 'EGP' ? ' EGP' : ''}</span>
         </div>
     `).join('');
     
     // Update total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    checkoutTotal.textContent = `$${total}`;
+    const currency = cart.length > 0 ? cart[0].currency : 'EGP';
+    checkoutTotal.textContent = `${currency === 'USD' ? '$' : ''}${total}${currency === 'EGP' ? ' EGP' : ''}`;
     
     // Auto-fill email since user is guaranteed to be logged in
     setTimeout(() => {
@@ -3042,6 +3051,8 @@ async function submitOrder() {
             paymentMethod,
             items: cart,
             total,
+            currency: currency,
+            userLocation: userLocation,
             paymentStatus: 'pending',
             status: 'new',
             type: 'coaching-program-order'
@@ -3056,18 +3067,22 @@ async function submitOrder() {
         }
         
         // Show success message (user is guaranteed to be logged in)
+        const currency = cart.length > 0 ? cart[0].currency : 'EGP';
+        const currencySymbol = currency === 'USD' ? '$' : '';
+        const currencySuffix = currency === 'EGP' ? ' EGP' : '';
+        
         let successMessage = `🎉 Order submitted successfully!
 
 📋 Order Summary:
-${cart.map(item => `• ${item.serviceName} × ${item.quantity} = $${item.price * item.quantity}`).join('\n')}
+${cart.map(item => `• ${item.serviceName} × ${item.quantity} = ${item.currency === 'USD' ? '$' : ''}${item.price * item.quantity}${item.currency === 'EGP' ? ' EGP' : ''}`).join('\n')}
 
-💰 Total: $${total}`;
+💰 Total: ${currencySymbol}${total}${currencySuffix}`;
 
         if (paymentMethod === 'instapay') {
             successMessage += `
 
 💳 InstaPay Payment Instructions:
-Transfer $${total} to: +201234567890
+Transfer ${currencySymbol}${total}${currencySuffix} to: +201234567890
 Name: FitCoach Services
 
 Once payment is completed, our admin will confirm your order and contact you within 24 hours.`;
@@ -3077,14 +3092,14 @@ Once payment is completed, our admin will confirm your order and contact you wit
 🏦 Bank Transfer Details:
 Bank: National Bank of Egypt
 Account: 123456789012345
-Amount: $${total}
+Amount: ${currencySymbol}${total}${currencySuffix}
 
 Please include your name in the transfer reference.`;
         } else {
             successMessage += `
 
 💰 Cash Payment:
-Please prepare $${total} for your first session or visit our office.`;
+Please prepare ${currencySymbol}${total}${currencySuffix} for your first session or visit our office.`;
         }
 
         successMessage += `
