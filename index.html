@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitCoach - Professional Fitness Coaching</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -473,6 +473,12 @@ p {
 .service-card.featured {
     border: 2px solid var(--color-primary);
     transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .service-card.featured {
+        transform: none;
+    }
 }
 
         .featured-badge {
@@ -1429,6 +1435,8 @@ p {
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s ease;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
     }
     
     .nav-menu.active {
@@ -1450,21 +1458,27 @@ p {
     .auth-buttons .btn {
         width: 100%;
         justify-content: center;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
     }
     
     .user-menu {
         flex-direction: column;
         gap: 0.5rem;
         width: 100%;
+        padding: 1rem;
     }
     
     .user-email {
         text-align: center;
+        max-width: none;
     }
     
     .modal-content {
         width: 95%;
         margin: 1rem;
+        max-height: 90vh;
+        overflow-y: auto;
     }
     
     .hero-content {
@@ -1475,10 +1489,18 @@ p {
     
     .hero-title {
         font-size: 2.5rem;
+        line-height: 1.2;
     }
     
     .hero-actions {
         justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        max-width: 300px;
     }
     
     .hero-image {
@@ -1488,6 +1510,9 @@ p {
     .floating-card {
         position: static;
         margin-top: 1rem;
+        max-width: 200px;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .about-content,
@@ -1503,6 +1528,36 @@ p {
     .hero-stats {
         justify-content: center;
         gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat {
+        min-width: 120px;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .service-card {
+        padding: 1.5rem;
+    }
+    
+    .service-card.featured {
+        transform: none;
+        max-width: none;
+        margin: 0;
+    }
+    
+    .testimonials-carousel {
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .t-card {
+        flex: 0 0 280px;
+        padding: 0.75rem;
     }
     
     .footer-content {
@@ -1529,11 +1584,45 @@ p {
     .hero-container {
         padding: 0 1rem;
     }
+    
+    /* Cart and modal improvements */
+    .cart-content,
+    .checkout-content,
+    .login-required-content {
+        width: 95%;
+        max-height: 90vh;
+        margin: 1rem;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .cart-item-controls {
+        justify-content: center;
+    }
+    
+    .service-actions {
+        gap: 0.75rem;
+    }
+    
+    .quantity-selector {
+        gap: 0.75rem;
+    }
+    
+    .btn-cart {
+        width: 100%;
+        font-size: 0.875rem;
+        padding: 0.75rem 1rem;
+    }
 }
 
 @media (max-width: 480px) {
     .hero-title {
         font-size: 2rem;
+        line-height: 1.1;
     }
     
     .btn-large {
@@ -1543,20 +1632,81 @@ p {
     
     .hero-actions {
         flex-direction: column;
+        gap: 0.75rem;
     }
     
     .hero-actions .btn {
         width: 100%;
         justify-content: center;
+        max-width: none;
     }
     
     .stat-number {
         font-size: 1.5rem;
     }
     
+    .stat {
+        min-width: 100px;
+    }
+    
     .services-grid,
     .testimonials-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .service-card {
+        padding: 1rem;
+    }
+    
+    .service-features li {
+        font-size: 0.8rem;
+    }
+    
+    .t-card {
+        flex: 0 0 260px;
+        padding: 0.5rem;
+    }
+    
+    .t-avatar {
+        border-radius: 0.5rem;
+    }
+    
+    .nav-container {
+        padding: 0 0.5rem;
+    }
+    
+    .nav-brand .logo {
+        font-size: 1rem;
+    }
+    
+    .nav-brand .logo img {
+        height: 40px !important;
+    }
+    
+    .cart-toggle {
+        width: 40px;
+        height: 40px;
+        margin-left: 0.25rem;
+    }
+    
+    .cart-toggle svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .modal-content {
+        width: 98%;
+        margin: 0.5rem;
+    }
+    
+    .auth-form {
+        padding: 0 1rem 1.5rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
     }
 }
 </style>
@@ -1726,7 +1876,7 @@ p {
                     <div class="featured-badge">Premium Program</div>
                     <div class="service-icon">💪</div>
                     <h3 class="service-title">Complete Fitness Coaching Program</h3>
-                    <p class="service-description">
+                    <p class="service-description" id="programDescription">
                         Comprehensive 3-month fitness coaching program with personalized workout plans, nutrition guidance, and continuous support to transform your body and lifestyle.
                     </p>
                     <ul class="service-features">
@@ -1740,7 +1890,7 @@ p {
                         <li>Access to exclusive workout library</li>
                     </ul>
                     <div class="service-price">
-                        <span class="price" id="programPrice">3000 EGP</span>
+                        <span class="price" id="programPrice">4000 EGP</span>
                         <span class="period">/3 months</span>
                         
                     </div>
@@ -1750,7 +1900,7 @@ p {
                             <span id="fitness-program-qty">1</span>
                             <button type="button" onclick="updateQuantity('fitness-program', 1)">+</button>
                         </div>
-                        <button class="btn btn-cart btn-primary" onclick="addToCart('fitness-program', 'Complete Fitness Coaching Program', 3000, '3 months', 'EGP')">
+                        <button class="btn btn-cart btn-primary" onclick="addToCart('fitness-program', 'Complete Fitness Coaching Program', 4000, '3 months', 'EGP')">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
@@ -2632,7 +2782,7 @@ if (contactForm) {
         if (serviceType === 'fitness-program') {
             // Use location-based pricing
             if (userLocation === 'EG') {
-                servicePrice = 3000;
+                servicePrice = 4000;
                 serviceCurrency = 'EGP';
             } else {
                 servicePrice = 300;
@@ -2837,18 +2987,25 @@ document.head.appendChild(style);
         function updatePricingBasedOnLocation() {
             const programPrice = document.getElementById('programPrice');
             const fitnessProgramOption = document.getElementById('fitnessProgramOption');
+            const programDescription = document.getElementById('programDescription');
             
             if (userLocation === 'EG') {
                 // Egypt - show only Egyptian pricing
-                programPrice.textContent = '3000 EGP';
+                programPrice.textContent = '4000 EGP';
                 if (fitnessProgramOption) {
-                    fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - 3000 EGP';
+                    fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - 4000 EGP';
+                }
+                if (programDescription) {
+                    programDescription.textContent = 'Comprehensive 3-month fitness coaching program with personalized workout plans, nutrition guidance, and continuous support to transform your body and lifestyle.';
                 }
             } else {
-                // International - show only international pricing
+                // International - show only international pricing with free month
                 programPrice.textContent = '$300';
                 if (fitnessProgramOption) {
-                    fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - $300';
+                    fitnessProgramOption.textContent = 'Complete Fitness Coaching Program - $300 (3 months + 1 month free)';
+                }
+                if (programDescription) {
+                    programDescription.textContent = 'Comprehensive 3-month fitness coaching program with personalized workout plans, nutrition guidance, and continuous support to transform your body and lifestyle. Plus get 1 month free!';
                 }
             }
         }
@@ -3092,8 +3249,8 @@ ${cart.map(item => `• ${item.serviceName} × ${item.quantity} = ${item.currenc
             successMessage += `
 
 💳 InstaPay Payment Instructions:
-Transfer ${currencySymbol}${total}${currencySuffix} to: +201234567890
-Name: FitCoach Services
+Transfer ${currencySymbol}${total}${currencySuffix} to: +201141615312
+Name: bassem
 
 Once payment is completed, our admin will confirm your order and contact you within 24 hours.`;
         } else if (paymentMethod === 'bank-transfer') {
@@ -3101,7 +3258,7 @@ Once payment is completed, our admin will confirm your order and contact you wit
 
 🏦 Bank Transfer Details:
 Bank: National Bank of Egypt
-Account: 123456789012345
+Account: +201141615312
 Amount: ${currencySymbol}${total}${currencySuffix}
 
 Please include your name in the transfer reference.`;
