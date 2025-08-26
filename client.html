@@ -1908,20 +1908,36 @@
                                 </div>
                                 ` : ''}
                                 
-                                ${exercise.videoFile ? `
+                                ${(exercise.videoFiles && exercise.videoFiles.length > 0) || exercise.videoFile ? `
                                 <div class="exercise-section">
                                     <h4 class="exercise-section-title">🎥 Video Demonstration</h4>
                                     <div class="exercise-video">
                                         <div class="exercise-video-header">
                                             <i class="fas fa-video" style="color: #0ea5e9;"></i>
-                                            <span style="font-weight: 600;">${exercise.videoFile}</span>
+                                            <span style="font-weight: 600;">
+                                                ${exercise.videoFiles && exercise.videoFiles.length > 0 
+                                                    ? `${exercise.videoFiles.length} Video${exercise.videoFiles.length > 1 ? 's' : ''}` 
+                                                    : exercise.videoFile}
+                                            </span>
                                         </div>
                                         <p class="exercise-video-text">
-                                            Watch the video demonstration to learn proper form and technique for this exercise.
+                                            ${exercise.videoFiles && exercise.videoFiles.length > 1 
+                                                ? `Watch ${exercise.videoFiles.length} video demonstrations to learn proper form and technique.` 
+                                                : 'Watch the video demonstration to learn proper form and technique for this exercise.'}
                                         </p>
-                                        <button onclick="console.log('Button clicked, videoFile:', '${exercise.videoFile}'); viewExerciseVideo('${exercise.videoFile}')" class="btn btn-primary" style="margin-top: 0.75rem;">
-                                            <i class="fas fa-play"></i> Watch Video
-                                        </button>
+                                        ${exercise.videoFiles && exercise.videoFiles.length > 0 ? `
+                                            <div style="margin-top: 0.75rem;">
+                                                ${exercise.videoFiles.map((video, index) => `
+                                                    <button onclick="viewExerciseVideo('${video}')" class="btn btn-primary" style="margin-right: 0.5rem; margin-bottom: 0.5rem; font-size: 0.8rem; padding: 0.5rem 0.75rem;">
+                                                        <i class="fas fa-play"></i> ${video.replace('.webm', '').replace('.mp4', '').replace(/_/g, ' ')}
+                                                    </button>
+                                                `).join('')}
+                                            </div>
+                                        ` : `
+                                            <button onclick="viewExerciseVideo('${exercise.videoFile}')" class="btn btn-primary" style="margin-top: 0.75rem;">
+                                                <i class="fas fa-play"></i> Watch Video
+                                            </button>
+                                        `}
                                     </div>
                                 </div>
                                 ` : ''}
@@ -2083,20 +2099,39 @@
                         </div>
                         ` : ''}
                         
-                        ${exercise.videoFile ? `
+                        ${(exercise.videoFiles && exercise.videoFiles.length > 0) || exercise.videoFile ? `
                         <div style="margin-bottom: 1.5rem;">
                             <h4 style="margin: 0 0 0.75rem 0; color: #374151;">🎥 Video Demonstration</h4>
                             <div style="background: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #0ea5e9;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem; color: #0c4a6e; margin-bottom: 0.75rem;">
-                                    <i class="fas fa-video" style="color: #0ea5e9;"></i>
-                                    <span style="font-weight: 600;">${exercise.videoFile}</span>
-                                </div>
-                                <p style="margin: 0 0 0.75rem; font-size: 0.875rem; color: #0c4a6e;">
-                                    Watch the video demonstration to learn proper form and technique for this exercise.
-                                </p>
-                                <button onclick="console.log('Modal button clicked, videoFile:', '${exercise.videoFile}'); viewExerciseVideo('${exercise.videoFile}')" style="background: #0ea5e9; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fas fa-play"></i> Watch Video
-                                </button>
+                                ${exercise.videoFiles && exercise.videoFiles.length > 0 ? `
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #0c4a6e; margin-bottom: 0.75rem;">
+                                            <i class="fas fa-video" style="color: #0ea5e9;"></i>
+                                            <span style="font-weight: 600;">${exercise.videoFiles.length} Video${exercise.videoFiles.length > 1 ? 's' : ''} Available</span>
+                                        </div>
+                                        <p style="margin: 0 0 0.75rem; font-size: 0.875rem; color: #0c4a6e;">
+                                            Watch ${exercise.videoFiles.length} video demonstration${exercise.videoFiles.length > 1 ? 's' : ''} to learn proper form and technique.
+                                        </p>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                            ${exercise.videoFiles.map((video, index) => `
+                                                <button onclick="viewExerciseVideo('${video}')" style="background: #0ea5e9; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                                                    <i class="fas fa-play"></i> ${video.replace('.webm', '').replace('.mp4', '').replace(/_/g, ' ')}
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` : exercise.videoFile ? `
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; color: #0c4a6e; margin-bottom: 0.75rem;">
+                                        <i class="fas fa-video" style="color: #0ea5e9;"></i>
+                                        <span style="font-weight: 600;">${exercise.videoFile}</span>
+                                    </div>
+                                    <p style="margin: 0 0 0.75rem; font-size: 0.875rem; color: #0c4a6e;">
+                                        Watch the video demonstration to learn proper form and technique for this exercise.
+                                    </p>
+                                    <button onclick="viewExerciseVideo('${exercise.videoFile}')" style="background: #0ea5e9; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-play"></i> Watch Video
+                                    </button>
+                                ` : ''}
                             </div>
                         </div>
                         ` : ''}
@@ -2190,7 +2225,7 @@
                                 style="width: 100%; border-radius: 0.5rem; display: block;" 
                                 preload="metadata" 
                                 poster=""
-                                muted="false"
+                                muted="true"
                                 autoplay="false"
                                 webkit-playsinline="true"
                                 x-webkit-airplay="allow"
