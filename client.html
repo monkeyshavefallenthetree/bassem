@@ -4,11 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Dashboard - FitCoach</title>
+    <!-- Prevent screenshots and screen recording -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; media-src 'self' https: data: blob:; img-src 'self' data: blob:;">
     <style>
         :root {
             --color-primary: #005f6a;
             --color-primary-dark: #004952;
             --color-bg: #f3e7d0;
+        }
+        
+        /* Prevent screenshots and screen recording */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Disable right-click context menu */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Prevent text selection */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Allow text selection for input fields and textareas */
+        input, textarea, select {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
         * {
             margin: 0;
@@ -962,6 +999,125 @@
         // Global variables
         let currentUser = null;
         let userData = null;
+        
+        // Prevent screenshots and screen recording
+        function preventScreenshots() {
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable keyboard shortcuts for screenshots
+            document.addEventListener('keydown', function(e) {
+                // Prevent Print Screen
+                if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+I (Developer Tools)
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent F12 (Developer Tools)
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+Shift+C (Developer Tools)
+                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+U (View Source)
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Prevent Ctrl+S (Save Page)
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable copy
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable cut
+            document.addEventListener('cut', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable paste (except in input fields)
+            document.addEventListener('paste', function(e) {
+                const target = e.target;
+                if (!target.matches('input, textarea, select')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Prevent screen capture on mobile devices
+            if (navigator.userAgent.match(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
+                // Disable touch gestures that might trigger screenshots
+                document.addEventListener('touchstart', function(e) {
+                    // Prevent long press (context menu)
+                    e.preventDefault();
+                }, { passive: false });
+                
+                // Disable pinch zoom
+                document.addEventListener('gesturestart', function(e) {
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('gesturechange', function(e) {
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('gestureend', function(e) {
+                    e.preventDefault();
+                });
+            }
+            
+            // Add visual indicator that content is protected
+            const style = document.createElement('style');
+            style.textContent = `
+                body::before {
+                    content: '🔒 Protected Content';
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: rgba(0, 0, 0, 0.7);
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    z-index: 9999;
+                    pointer-events: none;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Initialize screenshot prevention
+        preventScreenshots();
 
         // DOM elements
         const authScreen = document.getElementById('authScreen');
@@ -2206,7 +2362,27 @@
                     align-items: center;
                     justify-content: center;
                     -webkit-overflow-scrolling: touch;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
                 `;
+                
+                // Add protection to the modal
+                videoModal.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                videoModal.addEventListener('selectstart', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                videoModal.addEventListener('dragstart', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
                 
                 // Add responsive styles for mobile
                 const style = document.createElement('style');
@@ -2219,14 +2395,14 @@
                             max-height: none !important;
                             border-radius: 0 !important;
                             margin: 0 !important;
-                            padding: 0.5rem !important;
+                            padding: 0.25rem !important;
                         }
                         
                         #videoModal video {
                             width: 100% !important;
-                            height: calc(100vh - 120px) !important;
-                            min-height: 400px !important;
-                            object-fit: contain !important;
+                            height: calc(100vh - 80px) !important;
+                            min-height: 500px !important;
+                            object-fit: cover !important;
                             border-radius: 0.5rem !important;
                         }
                         
@@ -2253,18 +2429,25 @@
                             <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem; -webkit-tap-highlight-color: transparent;">&times;</button>
                         </div>
                         <div style="background: #000; border-radius: 0.5rem; position: relative; margin-bottom: 1rem;">
+                            <!-- Watermark overlay -->
+                            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.7); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 10; pointer-events: none;">
+                                🔒 Protected Content
+                            </div>
                             <video 
                                 controls 
                                 playsinline 
                                 webkit-playsinline 
-                                style="width: 100%; height: auto; min-height: 300px; border-radius: 0.5rem; display: block; object-fit: contain;" 
+                                style="width: 100%; height: auto; min-height: 400px; border-radius: 0.5rem; display: block; object-fit: cover;" 
                                 preload="metadata" 
                                 poster=""
                                 muted="true"
                                 autoplay="false"
                                 webkit-playsinline="true"
                                 x-webkit-airplay="allow"
-                                controlsList="nodownload">
+                                controlsList="nodownload"
+                                oncontextmenu="return false;"
+                                onselectstart="return false;"
+                                ondragstart="return false;">
                                 <!-- Safari prefers MP4 with H.264 codec first -->
                                 <source src="videos/${baseName}.mp4" type="video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"">
                                 <source src="videos/${baseName}.m4v" type="video/mp4">
@@ -2278,6 +2461,11 @@
                         <p style="color: #6b7280; font-size: 0.875rem; text-align: center; margin: 0;">
                             Safari requires MP4 format. If video doesn't play, ensure "${baseName}.mp4" exists in the videos folder.
                         </p>
+                        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 0.5rem; padding: 0.75rem; margin-top: 1rem; text-align: center;">
+                            <p style="color: #92400e; font-size: 0.875rem; margin: 0; font-weight: 500;">
+                                ⚠️ This content is protected. Screenshots and screen recording are disabled.
+                            </p>
+                        </div>
                     </div>
                 `;
                 
