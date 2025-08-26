@@ -3078,26 +3078,39 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="exerciseCategory">Exercise Category</label>
-                        <select id="exerciseCategory" required>
-                            <option value="">Select Category</option>
-                            <option value="chest">Chest</option>
-                            <option value="biceps">Biceps</option>
-                            <option value="triceps">Triceps</option>
-                            <option value="shoulders">Shoulders</option>
-                            <option value="back">Back</option>
-                            <option value="legs">Legs</option>
-                            <option value="abs">Abs</option>
-                            <option value="cardio">Cardio</option>
+                        <label for="workoutSplit">Workout Split</label>
+                        <select id="workoutSplit" required onchange="updateExerciseCategories()">
+                            <option value="">Select Workout Split</option>
+                            <option value="push-pull-legs">Push Pull Legs (3 Days)</option>
+                            <option value="arnold-split">Arnold Split (4 Days)</option>
+                            <option value="bro-split">Bro Split (5-6 Days)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="exerciseVideo">Video File Name</label>
+                        <label for="exerciseCategory">Exercise Category</label>
+                        <select id="exerciseCategory" required>
+                            <option value="">Select Workout Split First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="exerciseVideo">Video File Name(s)</label>
                         <div style="position: relative;">
-                            <input type="text" id="exerciseVideo" placeholder="Start typing to search videos..." required autocomplete="off">
+                            <input type="text" id="exerciseVideo" placeholder="Start typing to search videos..." autocomplete="off">
                             <div id="videoAutocomplete" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"></div>
                         </div>
-                        <small style="color: #6b7280; font-size: 0.875rem;">Start typing to search available videos in the videos folder</small>
+                        <div id="selectedVideos" style="margin-top: 0.5rem;"></div>
+                        <div style="margin-top: 0.5rem;">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addVideoToList()" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                <i class="fas fa-plus"></i> Add Video
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearVideoList()" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: 0.5rem;">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                        <small style="color: #6b7280; font-size: 0.875rem;">Add multiple videos for different angles or variations. At least one video is required.</small>
                     </div>
                 </div>
 
@@ -3170,26 +3183,40 @@
                         <input type="text" id="editExerciseName" required>
                     </div>
                     <div class="form-group">
-                        <label for="editExerciseCategory">Exercise Category</label>
-                        <select id="editExerciseCategory" required>
-                            <option value="chest">Chest</option>
-                            <option value="biceps">Biceps</option>
-                            <option value="triceps">Triceps</option>
-                            <option value="shoulders">Shoulders</option>
-                            <option value="back">Back</option>
-                            <option value="legs">Legs</option>
-                            <option value="abs">Abs</option>
-                            <option value="cardio">Cardio</option>
+                        <label for="editWorkoutSplit">Workout Split</label>
+                        <select id="editWorkoutSplit" required onchange="updateEditExerciseCategories()">
+                            <option value="">Select Workout Split</option>
+                            <option value="push-pull-legs">Push Pull Legs (3 Days)</option>
+                            <option value="arnold-split">Arnold Split (4 Days)</option>
+                            <option value="bro-split">Bro Split (5-6 Days)</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editExerciseVideo">Video File Name</label>
+                        <label for="editExerciseCategory">Exercise Category</label>
+                        <select id="editExerciseCategory" required>
+                            <option value="">Select Workout Split First</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editExerciseVideo">Video File Name(s)</label>
                         <div style="position: relative;">
-                            <input type="text" id="editExerciseVideo" placeholder="Start typing to search videos..." required autocomplete="off">
+                            <input type="text" id="editExerciseVideo" placeholder="Start typing to search videos..." autocomplete="off">
                             <div id="editVideoAutocomplete" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"></div>
                         </div>
+                        <div id="editSelectedVideos" style="margin-top: 0.5rem;"></div>
+                        <div style="margin-top: 0.5rem;">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addEditVideoToList()" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                <i class="fas fa-plus"></i> Add Video
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearEditVideoList()" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: 0.5rem;">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                        <small style="color: #6b7280; font-size: 0.875rem;">Add multiple videos for different angles or variations. At least one video is required.</small>
                     </div>
                     <div class="form-group">
                         <label for="editExerciseStatus">Status</label>
@@ -3471,8 +3498,14 @@
             
             const clientId = document.getElementById('exerciseClientSelect').value;
             const exerciseName = document.getElementById('exerciseName').value;
+            const workoutSplit = document.getElementById('workoutSplit').value;
             const category = document.getElementById('exerciseCategory').value;
-            const videoFile = document.getElementById('exerciseVideo').value;
+            const videoFiles = selectedVideos.length > 0 ? selectedVideos : [document.getElementById('exerciseVideo').value.trim()].filter(v => v);
+            
+            if (videoFiles.length === 0) {
+                showError('Please add at least one video file.');
+                return;
+            }
             const sets = parseInt(document.getElementById('exerciseSets').value);
             const reps = parseInt(document.getElementById('exerciseReps').value);
             const description = document.getElementById('exerciseDescription').value;
@@ -3492,8 +3525,9 @@
                     clientName: client.name,
                     clientEmail: client.email,
                     exerciseName: exerciseName,
+                    workoutSplit: workoutSplit,
                     category: category,
-                    videoFile: videoFile,
+                    videoFiles: videoFiles,
                     sets: sets,
                     reps: reps,
                     description: description,
@@ -4839,9 +4873,27 @@ Order Date: ${formattedDate}`;
                     <td>${exercise.exerciseName || 'N/A'}</td>
                     <td><span class="status-badge status-${exercise.category || 'active'}">${exercise.category || 'N/A'}</span></td>
                     <td>
-                        <button class="btn btn-view" onclick="viewExerciseVideo('${exercise.videoFile}')" title="View Video">
-                            <i class="fas fa-play"></i> ${exercise.videoFile || 'N/A'}
-                        </button>
+                        ${(exercise.videoFiles && exercise.videoFiles.length > 0) || exercise.videoFile ? `
+                            ${exercise.videoFiles && exercise.videoFiles.length > 0 ? `
+                                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span style="font-size: 0.75rem; color: #6b7280; font-weight: 600;">${exercise.videoFiles.length} Video${exercise.videoFiles.length > 1 ? 's' : ''}</span>
+                                    <button class="btn btn-view" onclick="viewExerciseVideo('${exercise.videoFiles[0]}')" title="View First Video">
+                                        <i class="fas fa-play"></i> ${exercise.videoFiles[0]}
+                                    </button>
+                                    ${exercise.videoFiles.length > 1 ? `
+                                        <button class="btn btn-view" onclick="viewExerciseVideo('${exercise.videoFiles[1]}')" title="View Second Video" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                            <i class="fas fa-play"></i> +${exercise.videoFiles.length - 1} more
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            ` : `
+                                <button class="btn btn-view" onclick="viewExerciseVideo('${exercise.videoFile}')" title="View Video">
+                                    <i class="fas fa-play"></i> ${exercise.videoFile}
+                                </button>
+                            `}
+                        ` : `
+                            <span style="color: #9ca3af; font-style: italic;">No videos</span>
+                        `}
                     </td>
                     <td><span class="status-badge status-${exercise.status || 'active'}">${exercise.status || 'active'}</span></td>
                     <td>${exercise.createdAt ? new Date(exercise.createdAt).toLocaleDateString() : 'N/A'}</td>
@@ -4863,7 +4915,16 @@ Order Date: ${formattedDate}`;
             const total = exercises.length;
             const active = exercises.filter(e => e.status === 'active').length;
             const completed = exercises.filter(e => e.status === 'completed').length;
-            const uniqueVideos = [...new Set(exercises.map(e => e.videoFile).filter(v => v))].length;
+            const uniqueVideos = [...new Set(
+                exercises.flatMap(e => {
+                    if (e.videoFiles && Array.isArray(e.videoFiles)) {
+                        return e.videoFiles;
+                    } else if (e.videoFile) {
+                        return [e.videoFile];
+                    }
+                    return [];
+                })
+            )].length;
             
             // Calculate changes (dummy values for demo)
             const exercisesChange = Math.round(Math.random() * 15);
@@ -7299,8 +7360,8 @@ This will grant the client access to their purchased services.`;
                                 <span class="nutrition-value">${exercise.reps || 0}</span>
                             </div>
                             <div class="nutrition-item">
-                                <span class="nutrition-label">Video</span>
-                                <span class="nutrition-value">${exercise.videoFile || 'N/A'}</span>
+                                <span class="nutrition-label">Videos</span>
+                                <span class="nutrition-value">${exercise.videoFiles ? exercise.videoFiles.length : (exercise.videoFile ? 1 : 0)}</span>
                             </div>
                             <div class="nutrition-item">
                                 <span class="nutrition-label">Total Reps</span>
@@ -7310,15 +7371,36 @@ This will grant the client access to their purchased services.`;
                     </div>
                 </div>
                 
-                ${exercise.videoFile ? `
+                ${(exercise.videoFiles && exercise.videoFiles.length > 0) || exercise.videoFile ? `
                 <div style="margin-bottom: 2rem;">
-                    <h4 style="margin-bottom: 1rem; color: #7c3aed;">🎥 Exercise Video</h4>
-                    <div style="background: #f3f4f6; border-radius: 0.5rem; padding: 2rem; text-align: center;">
-                        <p style="color: #6b7280; margin-bottom: 1rem;">Video: ${exercise.videoFile}</p>
-                        <p style="color: #9ca3af; font-size: 0.875rem;">Place your video file in the videos folder with the name: ${exercise.videoFile}</p>
-                        <button class="btn btn-primary" onclick="viewExerciseVideo('${exercise.videoFile}')">
-                            <i class="fas fa-play"></i> Play Video
-                        </button>
+                    <h4 style="margin-bottom: 1rem; color: #7c3aed;">🎥 Exercise Videos</h4>
+                    <div style="background: #f3f4f6; border-radius: 0.5rem; padding: 2rem;">
+                        ${exercise.videoFiles && exercise.videoFiles.length > 0 ? `
+                            <div style="margin-bottom: 1rem;">
+                                <p style="color: #6b7280; margin-bottom: 1rem; font-weight: 600;">Available Videos (${exercise.videoFiles.length}):</p>
+                                <div style="display: grid; gap: 0.5rem;">
+                                    ${exercise.videoFiles.map((video, index) => `
+                                        <div style="display: flex; align-items: center; justify-content: space-between; background: white; border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.75rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <i class="fas fa-video" style="color: #0ea5e9;"></i>
+                                                <span style="font-size: 0.875rem;">${video}</span>
+                                            </div>
+                                            <button class="btn btn-sm btn-primary" onclick="viewExerciseVideo('${video}')">
+                                                <i class="fas fa-play"></i> Play
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : exercise.videoFile ? `
+                            <div style="text-align: center;">
+                                <p style="color: #6b7280; margin-bottom: 1rem;">Video: ${exercise.videoFile}</p>
+                                <p style="color: #9ca3af; font-size: 0.875rem;">Place your video file in the videos folder with the name: ${exercise.videoFile}</p>
+                                <button class="btn btn-primary" onclick="viewExerciseVideo('${exercise.videoFile}')">
+                                    <i class="fas fa-play"></i> Play Video
+                                </button>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
                 ` : ''}
@@ -7364,18 +7446,18 @@ This will grant the client access to their purchased services.`;
                         <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem; -webkit-tap-highlight-color: transparent;">&times;</button>
                     </div>
                     <div style="background: #000; border-radius: 0.5rem; position: relative; margin-bottom: 1rem;">
-                        <video 
-                            controls 
-                            playsinline 
-                            webkit-playsinline 
-                            style="width: 100%; border-radius: 0.5rem; display: block;" 
-                            preload="metadata" 
-                            poster=""
-                            muted="false"
-                            autoplay="false"
-                            webkit-playsinline="true"
-                            x-webkit-airplay="allow"
-                            controlsList="nodownload">
+                                                    <video 
+                                controls 
+                                playsinline 
+                                webkit-playsinline 
+                                style="width: 100%; border-radius: 0.5rem; display: block;" 
+                                preload="metadata" 
+                                poster=""
+                                muted="true"
+                                autoplay="false"
+                                webkit-playsinline="true"
+                                x-webkit-airplay="allow"
+                                controlsList="nodownload">
                             <!-- Safari prefers MP4 with H.264 codec first -->
                             <source src="videos/${baseName}.mp4" type="video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"">
                             <source src="videos/${baseName}.m4v" type="video/mp4">
@@ -7491,8 +7573,25 @@ This will grant the client access to their purchased services.`;
             
             document.getElementById('editExerciseId').value = exercise.id;
             document.getElementById('editExerciseName').value = exercise.exerciseName || '';
+            document.getElementById('editWorkoutSplit').value = exercise.workoutSplit || '';
+            // Update categories based on workout split
+            updateEditExerciseCategories();
             document.getElementById('editExerciseCategory').value = exercise.category || '';
-            document.getElementById('editExerciseVideo').value = exercise.videoFile || '';
+            // Handle multiple videos
+            if (exercise.videoFiles && Array.isArray(exercise.videoFiles)) {
+                editSelectedVideos = [...exercise.videoFiles];
+                updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
+                document.getElementById('editExerciseVideo').value = '';
+            } else if (exercise.videoFile) {
+                // Backward compatibility with single video
+                editSelectedVideos = [exercise.videoFile];
+                updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
+                document.getElementById('editExerciseVideo').value = '';
+            } else {
+                editSelectedVideos = [];
+                updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
+                document.getElementById('editExerciseVideo').value = '';
+            }
             document.getElementById('editExerciseStatus').value = exercise.status || 'active';
             document.getElementById('editExerciseSets').value = exercise.sets || '';
             document.getElementById('editExerciseReps').value = exercise.reps || '';
@@ -7544,8 +7643,14 @@ This will grant the client access to their purchased services.`;
             
             const exerciseId = document.getElementById('editExerciseId').value;
             const exerciseName = document.getElementById('editExerciseName').value;
+            const workoutSplit = document.getElementById('editWorkoutSplit').value;
             const category = document.getElementById('editExerciseCategory').value;
-            const videoFile = document.getElementById('editExerciseVideo').value;
+            const videoFiles = editSelectedVideos.length > 0 ? editSelectedVideos : [document.getElementById('editExerciseVideo').value.trim()].filter(v => v);
+            
+            if (videoFiles.length === 0) {
+                showError('Please add at least one video file.');
+                return;
+            }
             const status = document.getElementById('editExerciseStatus').value;
             const sets = parseInt(document.getElementById('editExerciseSets').value);
             const reps = parseInt(document.getElementById('editExerciseReps').value);
@@ -7556,8 +7661,9 @@ This will grant the client access to their purchased services.`;
                 const exerciseRef = window.doc(window.db, EXERCISES_COLLECTION, exerciseId);
                 await window.updateDoc(exerciseRef, {
                     exerciseName,
+                    workoutSplit,
                     category,
-                    videoFile,
+                    videoFiles,
                     status,
                     sets,
                     reps,
@@ -7768,10 +7874,186 @@ This will grant the client access to their purchased services.`;
             }
         }
 
+        // Workout split categories
+        const workoutSplits = {
+            'push-pull-legs': {
+                name: 'Push Pull Legs (3 Days)',
+                categories: [
+                    { value: 'push', label: 'Push (Chest, Shoulders, Triceps)' },
+                    { value: 'pull', label: 'Pull (Back, Biceps)' },
+                    { value: 'legs', label: 'Legs (Quads, Hamstrings, Calves)' }
+                ]
+            },
+            'arnold-split': {
+                name: 'Arnold Split (4 Days)',
+                categories: [
+                    { value: 'chest-back', label: 'Chest & Back' },
+                    { value: 'shoulders-arms', label: 'Shoulders & Arms' },
+                    { value: 'legs', label: 'Legs' },
+                    { value: 'rest', label: 'Rest Day' }
+                ]
+            },
+            'bro-split': {
+                name: 'Bro Split (5-6 Days)',
+                categories: [
+                    { value: 'chest', label: 'Chest' },
+                    { value: 'back', label: 'Back' },
+                    { value: 'shoulders', label: 'Shoulders' },
+                    { value: 'biceps', label: 'Biceps' },
+                    { value: 'triceps', label: 'Triceps' },
+                    { value: 'legs', label: 'Legs' },
+                    { value: 'abs', label: 'Abs' },
+                    { value: 'cardio', label: 'Cardio' }
+                ]
+            }
+        };
+
+        // Update exercise categories based on selected workout split
+        function updateExerciseCategories() {
+            const workoutSplit = document.getElementById('workoutSplit').value;
+            const categorySelect = document.getElementById('exerciseCategory');
+            
+            // Clear current options
+            categorySelect.innerHTML = '<option value="">Select Category</option>';
+            
+            if (workoutSplit && workoutSplits[workoutSplit]) {
+                const categories = workoutSplits[workoutSplit].categories;
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.value;
+                    option.textContent = category.label;
+                    categorySelect.appendChild(option);
+                });
+            }
+        }
+
+        // Update edit exercise categories based on selected workout split
+        function updateEditExerciseCategories() {
+            const workoutSplit = document.getElementById('editWorkoutSplit').value;
+            const categorySelect = document.getElementById('editExerciseCategory');
+            
+            // Clear current options
+            categorySelect.innerHTML = '<option value="">Select Category</option>';
+            
+            if (workoutSplit && workoutSplits[workoutSplit]) {
+                const categories = workoutSplits[workoutSplit].categories;
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.value;
+                    option.textContent = category.label;
+                    categorySelect.appendChild(option);
+                });
+            }
+        }
+
+        // Multiple video management
+        let selectedVideos = [];
+        let editSelectedVideos = [];
+
+        // Add video to create form list
+        function addVideoToList() {
+            const videoInput = document.getElementById('exerciseVideo');
+            const videoName = videoInput.value.trim();
+            
+            if (!videoName) {
+                showError('Please enter a video file name.');
+                return;
+            }
+            
+            if (selectedVideos.includes(videoName)) {
+                showError('This video is already in the list.');
+                return;
+            }
+            
+            selectedVideos.push(videoName);
+            updateVideoListDisplay('selectedVideos', selectedVideos);
+            videoInput.value = '';
+            hideAutocomplete('exerciseVideo');
+        }
+
+        // Add video to edit form list
+        function addEditVideoToList() {
+            const videoInput = document.getElementById('editExerciseVideo');
+            const videoName = videoInput.value.trim();
+            
+            if (!videoName) {
+                showError('Please enter a video file name.');
+                return;
+            }
+            
+            if (editSelectedVideos.includes(videoName)) {
+                showError('This video is already in the list.');
+                return;
+            }
+            
+            editSelectedVideos.push(videoName);
+            updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
+            videoInput.value = '';
+            hideAutocomplete('editExerciseVideo');
+        }
+
+        // Remove video from list
+        function removeVideoFromList(videoName, isEdit = false) {
+            if (isEdit) {
+                editSelectedVideos = editSelectedVideos.filter(v => v !== videoName);
+                updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
+            } else {
+                selectedVideos = selectedVideos.filter(v => v !== videoName);
+                updateVideoListDisplay('selectedVideos', selectedVideos);
+            }
+        }
+
+        // Clear all videos from list
+        function clearVideoList() {
+            selectedVideos = [];
+            updateVideoListDisplay('selectedVideos', selectedVideos);
+        }
+
+        function clearEditVideoList() {
+            editSelectedVideos = [];
+            updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
+        }
+
+        // Update video list display
+        function updateVideoListDisplay(containerId, videos) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (videos.length === 0) {
+                container.innerHTML = '<div style="color: #9ca3af; font-size: 0.875rem; font-style: italic;">No videos added yet</div>';
+                return;
+            }
+            
+            const videoList = videos.map((video, index) => `
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem; margin-bottom: 0.25rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-video" style="color: #0ea5e9; font-size: 0.75rem;"></i>
+                        <span style="font-size: 0.875rem;">${video}</span>
+                    </div>
+                    <button type="button" onclick="removeVideoFromList('${video}', ${containerId === 'editSelectedVideos'})" 
+                            style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.25rem; font-size: 0.75rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            container.innerHTML = videoList;
+        }
+
+        // Update selectVideo function to work with multiple videos
+        function selectVideo(videoName, inputId) {
+            document.getElementById(inputId).value = videoName;
+            hideAutocomplete(inputId);
+        }
+
         // Load video files when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadVideoFiles();
             initializeVideoAutocomplete();
+            
+            // Initialize video lists
+            updateVideoListDisplay('selectedVideos', selectedVideos);
+            updateVideoListDisplay('editSelectedVideos', editSelectedVideos);
         });
     </script>
 </body>
