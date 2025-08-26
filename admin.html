@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7334,6 +7334,9 @@ This will grant the client access to their purchased services.`;
                 return;
             }
             
+            console.log('=== VIEW EXERCISE VIDEO FUNCTION CALLED ===');
+            console.log('Video file:', videoFile);
+            
             // Create a modal to show the video
             const videoModal = document.createElement('div');
             videoModal.className = 'modal active';
@@ -7351,6 +7354,9 @@ This will grant the client access to their purchased services.`;
                 -webkit-overflow-scrolling: touch;
             `;
             
+            // Get base filename for multiple format support
+            const baseName = videoFile.replace(/\.[^/.]+$/, '');
+            
             videoModal.innerHTML = `
                 <div style="background: white; border-radius: 1rem; padding: 1rem; max-width: 800px; width: 95%; max-height: 95vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -7358,55 +7364,107 @@ This will grant the client access to their purchased services.`;
                         <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem; -webkit-tap-highlight-color: transparent;">&times;</button>
                     </div>
                     <div style="background: #000; border-radius: 0.5rem; position: relative; margin-bottom: 1rem;">
-                        <video controls playsinline webkit-playsinline style="width: 100%; border-radius: 0.5rem; display: block;" preload="metadata" poster="">
-                            <source src="videos/${videoFile}" type="video/mp4">
+                        <video 
+                            controls 
+                            playsinline 
+                            webkit-playsinline 
+                            style="width: 100%; border-radius: 0.5rem; display: block;" 
+                            preload="metadata" 
+                            poster=""
+                            muted="false"
+                            autoplay="false"
+                            webkit-playsinline="true"
+                            x-webkit-airplay="allow"
+                            controlsList="nodownload">
+                            <!-- Safari prefers MP4 with H.264 codec first -->
+                            <source src="videos/${baseName}.mp4" type="video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"">
+                            <source src="videos/${baseName}.m4v" type="video/mp4">
+                            <!-- Original file as fallback -->
                             <source src="videos/${videoFile}" type="video/webm">
-                            <source src="videos/${videoFile}" type="video/quicktime">
+                            <source src="videos/${baseName}.mov" type="video/quicktime">
+                            <source src="videos/${baseName}.3gp" type="video/3gpp">
                             Your browser does not support the video tag.
                         </video>
                     </div>
                     <p style="color: #6b7280; font-size: 0.875rem; text-align: center; margin: 0;">
-                        If the video doesn't play, make sure the file "${videoFile}" exists in the videos folder.
+                        Safari requires MP4 format. If video doesn't play, ensure "${baseName}.mp4" exists in the videos folder.
                     </p>
                 </div>
             `;
             
             document.body.appendChild(videoModal);
             
-            // iOS-specific video handling
+            // Safari-specific video handling
             const video = videoModal.querySelector('video');
             if (video) {
-                // Force video to load on iOS
+                // Safari-specific event listeners
+                video.addEventListener('loadstart', () => {
+                    console.log('Video load started');
+                });
+                
                 video.addEventListener('loadedmetadata', () => {
                     console.log('Video metadata loaded successfully');
                 });
                 
+                video.addEventListener('loadeddata', () => {
+                    console.log('Video data loaded');
+                });
+                
+                video.addEventListener('canplay', () => {
+                    console.log('Video can play');
+                });
+                
+                video.addEventListener('canplaythrough', () => {
+                    console.log('Video can play through without buffering');
+                });
+                
                 video.addEventListener('error', (e) => {
                     console.error('Video error:', e);
+                    console.error('Video error details:', video.error);
+                    
                     const errorDiv = document.createElement('div');
                     errorDiv.style.cssText = `
                         position: absolute;
                         top: 50%;
                         left: 50%;
                         transform: translate(-50%, -50%);
-                        background: rgba(0, 0, 0, 0.8);
+                        background: rgba(255, 0, 0, 0.8);
                         color: white;
                         padding: 1rem;
                         border-radius: 0.5rem;
                         text-align: center;
+                        max-width: 80%;
                     `;
+                    
+                    let errorMessage = 'Unable to load video';
+                    if (video.error) {
+                        switch(video.error.code) {
+                            case 1:
+                                errorMessage = 'Video loading aborted';
+                                break;
+                            case 2:
+                                errorMessage = 'Network error loading video';
+                                break;
+                            case 3:
+                                errorMessage = 'Video decoding failed';
+                                break;
+                            case 4:
+                                errorMessage = 'Video format not supported';
+                                break;
+                        }
+                    }
+                    
                     errorDiv.innerHTML = `
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚠️</div>
-                        <p style="margin: 0;">Video cannot be played on this device.</p>
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div>
+                        <p style="margin: 0; font-size: 1rem;">${errorMessage}</p>
                         <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem;">File: ${videoFile}</p>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.75rem; color: #ffeb3b;">Safari requires MP4 format with H.264 codec</p>
                     `;
                     video.parentElement.appendChild(errorDiv);
                 });
                 
-                // iOS Safari specific: force play on user interaction
-                video.addEventListener('canplay', () => {
-                    console.log('Video can play');
-                });
+                // Force video to load on Safari
+                video.load();
             }
             
             // Close modal when clicking outside
