@@ -3093,8 +3093,11 @@
                     </div>
                     <div class="form-group">
                         <label for="exerciseVideo">Video File Name</label>
-                        <input type="text" id="exerciseVideo" placeholder="e.g., chest_exercise.mp4" required>
-                        <small style="color: #6b7280; font-size: 0.875rem;">Place your video file in the videos folder with this name</small>
+                        <div style="position: relative;">
+                            <input type="text" id="exerciseVideo" placeholder="Start typing to search videos..." required autocomplete="off">
+                            <div id="videoAutocomplete" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"></div>
+                        </div>
+                        <small style="color: #6b7280; font-size: 0.875rem;">Start typing to search available videos in the videos folder</small>
                     </div>
                 </div>
 
@@ -3183,7 +3186,10 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="editExerciseVideo">Video File Name</label>
-                        <input type="text" id="editExerciseVideo" required>
+                        <div style="position: relative;">
+                            <input type="text" id="editExerciseVideo" placeholder="Start typing to search videos..." required autocomplete="off">
+                            <div id="editVideoAutocomplete" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="editExerciseStatus">Status</label>
@@ -7342,27 +7348,66 @@ This will grant the client access to their purchased services.`;
                 z-index: 2000;
                 align-items: center;
                 justify-content: center;
+                -webkit-overflow-scrolling: touch;
             `;
             
             videoModal.innerHTML = `
-                <div style="background: white; border-radius: 1rem; padding: 2rem; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="margin: 0; color: #1f2937;">Exercise Video: ${videoFile}</h3>
-                        <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;">&times;</button>
+                <div style="background: white; border-radius: 1rem; padding: 1rem; max-width: 800px; width: 95%; max-height: 95vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; color: #1f2937; font-size: 1.25rem;">Exercise Video: ${videoFile}</h3>
+                        <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem; -webkit-tap-highlight-color: transparent;">&times;</button>
                     </div>
-                    <div style="background: #000; border-radius: 0.5rem; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                        <video controls style="width: 100%; height: 100%; border-radius: 0.5rem;">
+                    <div style="background: #000; border-radius: 0.5rem; position: relative; margin-bottom: 1rem;">
+                        <video controls playsinline webkit-playsinline style="width: 100%; border-radius: 0.5rem; display: block;" preload="metadata" poster="">
                             <source src="videos/${videoFile}" type="video/mp4">
+                            <source src="videos/${videoFile}" type="video/webm">
+                            <source src="videos/${videoFile}" type="video/quicktime">
                             Your browser does not support the video tag.
                         </video>
                     </div>
-                    <p style="color: #6b7280; font-size: 0.875rem; text-align: center;">
+                    <p style="color: #6b7280; font-size: 0.875rem; text-align: center; margin: 0;">
                         If the video doesn't play, make sure the file "${videoFile}" exists in the videos folder.
                     </p>
                 </div>
             `;
             
             document.body.appendChild(videoModal);
+            
+            // iOS-specific video handling
+            const video = videoModal.querySelector('video');
+            if (video) {
+                // Force video to load on iOS
+                video.addEventListener('loadedmetadata', () => {
+                    console.log('Video metadata loaded successfully');
+                });
+                
+                video.addEventListener('error', (e) => {
+                    console.error('Video error:', e);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(0, 0, 0, 0.8);
+                        color: white;
+                        padding: 1rem;
+                        border-radius: 0.5rem;
+                        text-align: center;
+                    `;
+                    errorDiv.innerHTML = `
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚠️</div>
+                        <p style="margin: 0;">Video cannot be played on this device.</p>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem;">File: ${videoFile}</p>
+                    `;
+                    video.parentElement.appendChild(errorDiv);
+                });
+                
+                // iOS Safari specific: force play on user interaction
+                video.addEventListener('canplay', () => {
+                    console.log('Video can play');
+                });
+            }
             
             // Close modal when clicking outside
             videoModal.addEventListener('click', (e) => {
@@ -7470,6 +7515,205 @@ This will grant the client access to their purchased services.`;
                 console.error('Error updating exercise:', error);
                 showError('Failed to update exercise. Please try again.');
             }
+        });
+
+        // Video autocomplete functionality
+        let videoFiles = [];
+        let currentAutocomplete = null;
+
+        // Load video files from the videos folder
+        async function loadVideoFiles() {
+            try {
+                // Since we can't directly read the folder, we'll use a predefined list
+                // You can update this list by scanning your videos folder
+                videoFiles = [
+                    'abductor.webm',
+                    'abs 2.webm',
+                    'abs machine.webm',
+                    'abs.webm',
+                    'adduction static streach.webm',
+                    'adductors.webm',
+                    'ankel mobility.webm',
+                    'ankle mobility 2.webm',
+                    'ankle mobility.webm',
+                    'back dynamic streach.webm',
+                    'back static streach.webm',
+                    'back xtension hamstring.webm',
+                    'barbell rdl.webm',
+                    'barbell squat.webm',
+                    'barbell sumo squat.webm',
+                    'beg shuolder taps.webm',
+                    'biceps static streach.webm',
+                    'bulgarian lunges quad.webm',
+                    'bulgarian spilit squat.webm',
+                    'burpees.webm',
+                    'cable lat pull down.webm',
+                    'cable setup.webm',
+                    'calv machine.webm',
+                    'calv on step 2.webm',
+                    'calv on step.webm',
+                    'calv static streach.webm',
+                    'chest static streach.webm',
+                    'close grip eagle lat pull down.webm',
+                    'complex shoulder glutes.webm',
+                    'crunch.webm',
+                    'db hip thrust.webm',
+                    'db squat v.webm',
+                    'db squat.webm',
+                    'db sumo squat.webm',
+                    'dynamic lunges.webm',
+                    'eleven squat body weight.webm',
+                    'glutes static streach.webm',
+                    'hamstring static streach.webm',
+                    'high knee.webm',
+                    'hip mobility 0.webm',
+                    'hip mobility 2.webm',
+                    'hip mobility 3.webm',
+                    'hip mobility 4.webm',
+                    'hip mobility 9.webm',
+                    'hip mobility.webm',
+                    'hip thrust.webm',
+                    'IMG_4772.webm',
+                    'incline cable low to high.webm',
+                    'incline cable press.webm',
+                    'jumping jacks.webm',
+                    'jumping squat.webm',
+                    'kayphosis 2.webm',
+                    'kayphosis 3.webm',
+                    'kayphosis 5.webm',
+                    'kayphosis 6.webm',
+                    'kayphosis 7.webm',
+                    'kayphosis 8.webm',
+                    'kick back.webm',
+                    'knee raises.webm',
+                    'kyphosis.webm',
+                    'kyphosis2.webm',
+                    'lat back static streach.webm',
+                    'leg curl.webm',
+                    'leg extension.webm',
+                    'leg press v.webm',
+                    'leg press.webm',
+                    'lower abs 4.webm',
+                    'lower abs.webm',
+                    'lower scoliosis.webm',
+                    'lunges body weight.webm',
+                    'mountain climber.webm',
+                    'obliques with plate.webm',
+                    'obliques.webm',
+                    'plank shoulder taps.webm',
+                    'plank.webm',
+                    'pull ups.webm',
+                    'quad static streach.webm',
+                    'rdl.webm',
+                    'reverse crunch.webm',
+                    'rope knee abs.webm',
+                    'rotation.webm',
+                    'scoliosis lower 2.webm',
+                    'scoliosis upper.webm',
+                    'scorpion.webm',
+                    'seated kick back.webm',
+                    'seated leg curl.webm',
+                    'shoulder mobility.webm',
+                    'shoulder taps.webm',
+                    'side plank.webm',
+                    'single rdl.webm',
+                    'smith calv.webm',
+                    'squat body weight.webm',
+                    'squat sumo body weight.webm',
+                    'static back streaching 2.webm',
+                    'static back streaching.webm',
+                    'static lower back.webm',
+                    'sumo squat body weight.webm',
+                    'triceos static streach 2.webm',
+                    'triceps static streach.webm',
+                    'twist.webm'
+                ];
+                
+                console.log('Video files loaded:', videoFiles.length);
+            } catch (error) {
+                console.error('Error loading video files:', error);
+                videoFiles = [];
+            }
+        }
+
+        // Filter video files based on input
+        function filterVideos(searchTerm) {
+            if (!searchTerm) return [];
+            return videoFiles.filter(video => 
+                video.toLowerCase().includes(searchTerm.toLowerCase())
+            ).slice(0, 10); // Limit to 10 results
+        }
+
+        // Show autocomplete dropdown
+        function showAutocomplete(input, autocompleteDiv, filteredVideos) {
+            if (filteredVideos.length === 0) {
+                autocompleteDiv.style.display = 'none';
+                return;
+            }
+
+            autocompleteDiv.innerHTML = filteredVideos.map(video => `
+                <div class="autocomplete-item" style="padding: 0.75rem; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background-color 0.2s;" 
+                     onmouseover="this.style.backgroundColor='#f9fafb'" 
+                     onmouseout="this.style.backgroundColor='white'"
+                     onclick="selectVideo('${video}', '${input.id}')">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-video" style="color: #0ea5e9; font-size: 0.875rem;"></i>
+                        <span style="font-size: 0.875rem;">${video}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            autocompleteDiv.style.display = 'block';
+        }
+
+        // Select video from autocomplete
+        function selectVideo(videoName, inputId) {
+            document.getElementById(inputId).value = videoName;
+            hideAutocomplete(inputId);
+        }
+
+        // Hide autocomplete dropdown
+        function hideAutocomplete(inputId) {
+            const autocompleteDiv = inputId === 'exerciseVideo' ? 
+                document.getElementById('videoAutocomplete') : 
+                document.getElementById('editVideoAutocomplete');
+            if (autocompleteDiv) {
+                autocompleteDiv.style.display = 'none';
+            }
+        }
+
+        // Initialize autocomplete for video inputs
+        function initializeVideoAutocomplete() {
+            const exerciseVideoInput = document.getElementById('exerciseVideo');
+            const editExerciseVideoInput = document.getElementById('editExerciseVideo');
+
+            if (exerciseVideoInput) {
+                exerciseVideoInput.addEventListener('input', function() {
+                    const filteredVideos = filterVideos(this.value);
+                    showAutocomplete(this, document.getElementById('videoAutocomplete'), filteredVideos);
+                });
+
+                exerciseVideoInput.addEventListener('blur', function() {
+                    setTimeout(() => hideAutocomplete('exerciseVideo'), 200);
+                });
+            }
+
+            if (editExerciseVideoInput) {
+                editExerciseVideoInput.addEventListener('input', function() {
+                    const filteredVideos = filterVideos(this.value);
+                    showAutocomplete(this, document.getElementById('editVideoAutocomplete'), filteredVideos);
+                });
+
+                editExerciseVideoInput.addEventListener('blur', function() {
+                    setTimeout(() => hideAutocomplete('editExerciseVideo'), 200);
+                });
+            }
+        }
+
+        // Load video files when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVideoFiles();
+            initializeVideoAutocomplete();
         });
     </script>
 </body>
