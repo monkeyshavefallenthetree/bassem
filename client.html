@@ -2208,6 +2208,41 @@
                     -webkit-overflow-scrolling: touch;
                 `;
                 
+                // Add responsive styles for mobile
+                const style = document.createElement('style');
+                style.textContent = `
+                    @media (max-width: 768px) {
+                        #videoModal .modal-content {
+                            width: 100% !important;
+                            height: 100% !important;
+                            max-width: none !important;
+                            max-height: none !important;
+                            border-radius: 0 !important;
+                            margin: 0 !important;
+                            padding: 0.5rem !important;
+                        }
+                        
+                        #videoModal video {
+                            width: 100% !important;
+                            height: calc(100vh - 120px) !important;
+                            min-height: 400px !important;
+                            object-fit: contain !important;
+                            border-radius: 0.5rem !important;
+                        }
+                        
+                        #videoModal h3 {
+                            font-size: 1rem !important;
+                            margin-bottom: 0.5rem !important;
+                        }
+                        
+                        #videoModal p {
+                            font-size: 0.75rem !important;
+                            margin-top: 0.5rem !important;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                
                 // Get base filename for multiple format support
                 const baseName = videoFile.replace(/\.[^/.]+$/, '');
                 
@@ -2222,7 +2257,7 @@
                                 controls 
                                 playsinline 
                                 webkit-playsinline 
-                                style="width: 100%; border-radius: 0.5rem; display: block;" 
+                                style="width: 100%; height: auto; min-height: 300px; border-radius: 0.5rem; display: block; object-fit: contain;" 
                                 preload="metadata" 
                                 poster=""
                                 muted="true"
