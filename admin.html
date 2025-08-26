@@ -7436,28 +7436,63 @@ This will grant the client access to their purchased services.`;
                 -webkit-overflow-scrolling: touch;
             `;
             
+            // Add responsive styles for mobile
+            const style = document.createElement('style');
+            style.textContent = `
+                @media (max-width: 768px) {
+                    #videoModal .modal-content {
+                        width: 100% !important;
+                        height: 100% !important;
+                        max-width: none !important;
+                        max-height: none !important;
+                        border-radius: 0 !important;
+                        margin: 0 !important;
+                        padding: 0.5rem !important;
+                    }
+                    
+                    #videoModal video {
+                        width: 100% !important;
+                        height: calc(100vh - 120px) !important;
+                        min-height: 400px !important;
+                        object-fit: contain !important;
+                        border-radius: 0.5rem !important;
+                    }
+                    
+                    #videoModal h3 {
+                        font-size: 1rem !important;
+                        margin-bottom: 0.5rem !important;
+                    }
+                    
+                    #videoModal p {
+                        font-size: 0.75rem !important;
+                        margin-top: 0.5rem !important;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
             // Get base filename for multiple format support
             const baseName = videoFile.replace(/\.[^/.]+$/, '');
             
-            videoModal.innerHTML = `
+                        videoModal.innerHTML = `
                 <div style="background: white; border-radius: 1rem; padding: 1rem; max-width: 800px; width: 95%; max-height: 95vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <h3 style="margin: 0; color: #1f2937; font-size: 1.25rem;">Exercise Video: ${videoFile}</h3>
                         <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem; -webkit-tap-highlight-color: transparent;">&times;</button>
                     </div>
                     <div style="background: #000; border-radius: 0.5rem; position: relative; margin-bottom: 1rem;">
-                                                    <video 
-                                controls 
-                                playsinline 
-                                webkit-playsinline 
-                                style="width: 100%; border-radius: 0.5rem; display: block;" 
-                                preload="metadata" 
-                                poster=""
-                                muted="true"
-                                autoplay="false"
-                                webkit-playsinline="true"
-                                x-webkit-airplay="allow"
-                                controlsList="nodownload">
+                        <video 
+                            controls 
+                            playsinline 
+                            webkit-playsinline 
+                            style="width: 100%; height: auto; min-height: 300px; border-radius: 0.5rem; display: block; object-fit: contain;" 
+                            preload="metadata" 
+                            poster=""
+                            muted="true"
+                            autoplay="false"
+                            webkit-playsinline="true"
+                            x-webkit-airplay="allow"
+                            controlsList="nodownload">
                             <!-- Safari prefers MP4 with H.264 codec first -->
                             <source src="videos/${baseName}.mp4" type="video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"">
                             <source src="videos/${baseName}.m4v" type="video/mp4">
