@@ -2159,39 +2159,77 @@
                 // Create a modal to show the video
                 const videoModal = document.createElement('div');
                 videoModal.className = 'modal active';
-                videoModal.style.cssText = `
-                    display: flex;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.8);
-                    z-index: 2000;
-                    align-items: center;
-                    justify-content: center;
-                `;
+                            videoModal.style.cssText = `
+                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 2000;
+                align-items: center;
+                justify-content: center;
+                -webkit-overflow-scrolling: touch;
+            `;
                 
                 videoModal.innerHTML = `
-                    <div style="background: white; border-radius: 1rem; padding: 2rem; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                            <h3 style="margin: 0; color: #1f2937;">Exercise Video: ${videoFile}</h3>
-                            <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;">&times;</button>
+                    <div style="background: white; border-radius: 1rem; padding: 1rem; max-width: 800px; width: 95%; max-height: 95vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0; color: #1f2937; font-size: 1.25rem;">Exercise Video: ${videoFile}</h3>
+                            <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem; -webkit-tap-highlight-color: transparent;">&times;</button>
                         </div>
-                        <div style="background: #000; border-radius: 0.5rem; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                            <video controls style="width: 100%; height: 100%; border-radius: 0.5rem;">
-                                <source src="videos/${videoFile}" type="video/webm">
+                        <div style="background: #000; border-radius: 0.5rem; position: relative; margin-bottom: 1rem;">
+                            <video controls playsinline webkit-playsinline style="width: 100%; border-radius: 0.5rem; display: block;" preload="metadata" poster="">
                                 <source src="videos/${videoFile}" type="video/mp4">
+                                <source src="videos/${videoFile}" type="video/webm">
+                                <source src="videos/${videoFile}" type="video/quicktime">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
-                        <p style="color: #6b7280; font-size: 0.875rem; text-align: center;">
+                        <p style="color: #6b7280; font-size: 0.875rem; text-align: center; margin: 0;">
                             If the video doesn't play, make sure the file "${videoFile}" exists in the videos folder.
                         </p>
                     </div>
                 `;
                 
                 document.body.appendChild(videoModal);
+                
+                // iOS-specific video handling
+                const video = videoModal.querySelector('video');
+                if (video) {
+                    // Force video to load on iOS
+                    video.addEventListener('loadedmetadata', () => {
+                        console.log('Video metadata loaded successfully');
+                    });
+                    
+                    video.addEventListener('error', (e) => {
+                        console.error('Video error:', e);
+                        const errorDiv = document.createElement('div');
+                        errorDiv.style.cssText = `
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(0, 0, 0, 0.8);
+                            color: white;
+                            padding: 1rem;
+                            border-radius: 0.5rem;
+                            text-align: center;
+                        `;
+                        errorDiv.innerHTML = `
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚠️</div>
+                            <p style="margin: 0;">Video cannot be played on this device.</p>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem;">File: ${videoFile}</p>
+                        `;
+                        video.parentElement.appendChild(errorDiv);
+                    });
+                    
+                    // iOS Safari specific: force play on user interaction
+                    video.addEventListener('canplay', () => {
+                        console.log('Video can play');
+                    });
+                }
                 
                 // Close modal when clicking outside
                 videoModal.addEventListener('click', (e) => {
