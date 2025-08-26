@@ -2705,7 +2705,103 @@
 
     <!-- Create Nutrition Plan Modal -->
     <div class="modal" id="nutritionPlanModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 95vw; max-height: 95vh; overflow-y: auto;">
+            <style>
+                @media (max-width: 768px) {
+                    #nutritionPlanModal .modal-content {
+                        width: 100% !important;
+                        height: 100% !important;
+                        max-width: none !important;
+                        max-height: none !important;
+                        border-radius: 0 !important;
+                        margin: 0 !important;
+                        padding: 1rem !important;
+                    }
+                    
+                    #nutritionPlanModal .form-row {
+                        flex-direction: column !important;
+                        gap: 1rem !important;
+                    }
+                    
+                    #nutritionPlanModal .form-group {
+                        width: 100% !important;
+                    }
+                    
+                    #nutritionPlanModal .day-tabs {
+                        flex-wrap: wrap !important;
+                        gap: 0.25rem !important;
+                    }
+                    
+                    #nutritionPlanModal .day-tab {
+                        flex: 1 1 calc(50% - 0.25rem) !important;
+                        min-width: 120px !important;
+                        font-size: 0.875rem !important;
+                        padding: 0.5rem 0.75rem !important;
+                    }
+                    
+                    #nutritionPlanModal .day-controls {
+                        flex-direction: column !important;
+                        gap: 0.75rem !important;
+                    }
+                    
+                    #nutritionPlanModal .day-controls > div {
+                        width: 100% !important;
+                        justify-content: center !important;
+                    }
+                    
+                    #nutritionPlanModal .meal-item {
+                        flex-direction: column !important;
+                        gap: 0.75rem !important;
+                        padding: 1rem !important;
+                    }
+                    
+                    #nutritionPlanModal .serving-controls {
+                        flex-direction: column !important;
+                        gap: 0.5rem !important;
+                        align-items: stretch !important;
+                    }
+                    
+                    #nutritionPlanModal .nutrition-inputs {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 0.5rem !important;
+                    }
+                    
+                    #nutritionPlanModal .nutrition-input {
+                        padding: 0.5rem !important;
+                        font-size: 0.875rem !important;
+                    }
+                    
+                    #nutritionPlanModal .nutrition-summary {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 0.5rem !important;
+                    }
+                    
+                    #nutritionPlanModal .action-buttons {
+                        flex-direction: column !important;
+                        gap: 0.75rem !important;
+                    }
+                    
+                    #nutritionPlanModal .action-buttons .btn {
+                        width: 100% !important;
+                        padding: 0.75rem 1rem !important;
+                    }
+                    
+                    #nutritionPlanModal h3, #nutritionPlanModal h4, #nutritionPlanModal h5 {
+                        font-size: 1.1rem !important;
+                        margin-bottom: 0.75rem !important;
+                    }
+                    
+                    #nutritionPlanModal input, #nutritionPlanModal select, #nutritionPlanModal textarea {
+                        font-size: 16px !important;
+                        padding: 0.75rem !important;
+                    }
+                    
+                    #nutritionPlanModal label {
+                        font-size: 0.9rem !important;
+                        margin-bottom: 0.5rem !important;
+                    }
+                }
+            </style>
             <div class="modal-header">
                 <h3 class="modal-title">Create Nutrition Plan</h3>
                 <button class="modal-close" onclick="closeModal('nutritionPlanModal')">&times;</button>
@@ -2803,7 +2899,7 @@
                     <!-- Nutrition Summary Card -->
                     <div id="nutritionSummary" style="background: white; border-radius: 0.75rem; padding: 1rem; margin-top: 1rem; border: 1px solid #e5e7eb;">
                         <h5 style="margin: 0 0 0.75rem 0; color: #374151; text-align: center;">📊 Current Meal Plan Totals</h5>
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center;">
+                        <div class="nutrition-summary" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center;">
                             <div style="background: #fef2f2; padding: 0.75rem; border-radius: 0.5rem;">
                                 <div id="totalCalories" style="font-size: 1.25rem; font-weight: 700; color: #dc2626;">0</div>
                                 <div style="font-size: 0.75rem; color: #6b7280;">Calories</div>
@@ -2865,7 +2961,7 @@
                     <!-- Day Control Panel -->
                     <div class="day-controls" style="background: #f8fafc; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; border: 1px solid #e5e7eb;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                                 <h4 style="margin: 0; color: #374151;" id="currentDayTitle">
                                     <i class="fas fa-calendar-day"></i> Day 1 Meal Plan
                                 </h4>
@@ -2873,7 +2969,7 @@
                                     0 cal • 0g protein • 0g carbs • 0g fat
                                 </span>
                             </div>
-                            <div style="display: flex; gap: 0.5rem;">
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                 <button type="button" class="btn btn-secondary btn-small" onclick="copyFromPreviousDay()">
                                     <i class="fas fa-copy"></i> Copy Previous Day
                                 </button>
@@ -4830,6 +4926,86 @@ Order Date: ${formattedDate}`;
             });
         }
 
+        async function deleteClient(clientId, clientName, clientEmail) {
+            const confirmMessage = `Are you sure you want to delete this client?
+
+👤 Client: ${clientName}
+📧 Email: ${clientEmail}
+
+⚠️ This action will also delete:
+• All exercises assigned to this client
+• All consultations for this client
+• All nutrition plans for this client
+
+⚠️ This action cannot be undone!`;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            try {
+                const deleteButtons = document.querySelectorAll(`[onclick*="deleteClient('${clientId}',"]`);
+                deleteButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                });
+
+                // Delete client's exercises first
+                const exercisesSnapshot = await window.getDocs(
+                    window.query(window.collection(window.db, EXERCISES_COLLECTION), 
+                    window.where('clientId', '==', clientId))
+                );
+                
+                const exerciseDeletePromises = exercisesSnapshot.docs.map(doc => 
+                    window.deleteDoc(window.doc(window.db, EXERCISES_COLLECTION, doc.id))
+                );
+                await Promise.all(exerciseDeletePromises);
+
+                // Delete client's consultations
+                const consultationsSnapshot = await window.getDocs(
+                    window.query(window.collection(window.db, CONSULTATIONS_COLLECTION), 
+                    window.where('clientId', '==', clientId))
+                );
+                
+                const consultationDeletePromises = consultationsSnapshot.docs.map(doc => 
+                    window.deleteDoc(window.doc(window.db, CONSULTATIONS_COLLECTION, doc.id))
+                );
+                await Promise.all(consultationDeletePromises);
+
+                // Delete client's nutrition plans
+                const nutritionPlansSnapshot = await window.getDocs(
+                    window.query(window.collection(window.db, NUTRITION_PLANS_COLLECTION), 
+                    window.where('clientId', '==', clientId))
+                );
+                
+                const nutritionPlanDeletePromises = nutritionPlansSnapshot.docs.map(doc => 
+                    window.deleteDoc(window.doc(window.db, NUTRITION_PLANS_COLLECTION, doc.id))
+                );
+                await Promise.all(nutritionPlanDeletePromises);
+
+                // Finally, delete the client
+                await window.deleteDoc(window.doc(window.db, CLIENTS_COLLECTION, clientId));
+
+                showSuccess(`✅ Client "${clientName}" and all associated data deleted successfully!`);
+                
+                // Refresh data
+                await loadClients();
+                await loadExercises();
+                await loadConsultations();
+                await loadNutritionPlans();
+
+            } catch (error) {
+                console.error('Error deleting client:', error);
+                showError('❌ Failed to delete client. Please try again.');
+
+                const deleteButtons = document.querySelectorAll(`[onclick*="deleteClient('${clientId}',"]`);
+                deleteButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+                });
+            }
+        }
+
         function renderClientsTable() {
             const tbody = document.getElementById('clientsTableBody');
             if (!tbody) return;
@@ -4844,6 +5020,9 @@ Order Date: ${formattedDate}`;
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-view" onclick="alert('Client: ${client.name || ''}\nEmail: ${client.email || ''}\nPhone: ${client.phone || ''}');">View</button>
+                            <button class="btn btn-danger" onclick="deleteClient('${client.id}', '${client.name || 'Unknown'}', '${client.email || 'Unknown'}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
                         </div>
                     </td>
                 `;
@@ -4887,9 +5066,9 @@ Order Date: ${formattedDate}`;
                                     ` : ''}
                                 </div>
                             ` : `
-                                <button class="btn btn-view" onclick="viewExerciseVideo('${exercise.videoFile}')" title="View Video">
+                        <button class="btn btn-view" onclick="viewExerciseVideo('${exercise.videoFile}')" title="View Video">
                                     <i class="fas fa-play"></i> ${exercise.videoFile}
-                                </button>
+                        </button>
                             `}
                         ` : `
                             <span style="color: #9ca3af; font-style: italic;">No videos</span>
@@ -7394,11 +7573,11 @@ This will grant the client access to their purchased services.`;
                             </div>
                         ` : exercise.videoFile ? `
                             <div style="text-align: center;">
-                                <p style="color: #6b7280; margin-bottom: 1rem;">Video: ${exercise.videoFile}</p>
-                                <p style="color: #9ca3af; font-size: 0.875rem;">Place your video file in the videos folder with the name: ${exercise.videoFile}</p>
-                                <button class="btn btn-primary" onclick="viewExerciseVideo('${exercise.videoFile}')">
-                                    <i class="fas fa-play"></i> Play Video
-                                </button>
+                        <p style="color: #6b7280; margin-bottom: 1rem;">Video: ${exercise.videoFile}</p>
+                        <p style="color: #9ca3af; font-size: 0.875rem;">Place your video file in the videos folder with the name: ${exercise.videoFile}</p>
+                        <button class="btn btn-primary" onclick="viewExerciseVideo('${exercise.videoFile}')">
+                            <i class="fas fa-play"></i> Play Video
+                        </button>
                             </div>
                         ` : ''}
                     </div>
@@ -7474,7 +7653,7 @@ This will grant the client access to their purchased services.`;
             // Get base filename for multiple format support
             const baseName = videoFile.replace(/\.[^/.]+$/, '');
             
-                        videoModal.innerHTML = `
+            videoModal.innerHTML = `
                 <div style="background: white; border-radius: 1rem; padding: 1rem; max-width: 800px; width: 95%; max-height: 95vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <h3 style="margin: 0; color: #1f2937; font-size: 1.25rem;">Exercise Video: ${videoFile}</h3>
